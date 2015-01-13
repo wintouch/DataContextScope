@@ -13,11 +13,11 @@ namespace Numero3.EntityFramework.Interfaces
     /// A read-only DbContextScope. Refer to the comments for IDbContextScope
     /// for more details.
     /// </summary>
-    public interface IDbContextReadOnlyScope : IDisposable
+    public interface IDataContextReadOnlyScope : IDisposable
     {
         /// <summary>
         /// The DbContext instances that this DbContextScope manages.
         /// </summary>
-        IDbContextCollection DbContexts { get; }
+        IDataContextCollection DbContexts { get; }
     }
 }

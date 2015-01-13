@@ -32,15 +32,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="EntityFramework">
-      <HintPath>..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.dll</HintPath>
-    </Reference>
-    <Reference Include="EntityFramework.SqlServer">
-      <HintPath>..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.Linq" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -49,11 +44,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AmbientContextSuppressor.cs" />
-    <Compile Include="AmbientDbContextLocator.cs" />
-    <Compile Include="DbContextCollection.cs" />
-    <Compile Include="DbContextReadOnlyScope.cs" />
-    <Compile Include="DbContextScope.cs" />
-    <Compile Include="DbContextScopeFactory.cs" />
+    <Compile Include="AmbientDataContextLocator.cs" />
+    <Compile Include="DataContextCollection.cs" />
+    <Compile Include="DataContextReadOnlyScope.cs" />
+    <Compile Include="DataContextScope.cs" />
+    <Compile Include="DataContextScopeFactory.cs" />
+    <Compile Include="LinqToSqlAdapters.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -61,7 +57,6 @@
       <Link>DbContextScope.Interfaces.licenseheader</Link>
     </None>
     <None Include="App.config" />
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EntityFramework.Interfaces\EntityFramework.Interfaces.csproj">

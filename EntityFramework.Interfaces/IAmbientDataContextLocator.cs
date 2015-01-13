@@ -5,14 +5,14 @@
  * This software may be modified and distributed under the terms
  * of the MIT license.  See the LICENSE file for details.
  */
-using System.Data.Entity;
+using System.Data.Linq;
 
 namespace Numero3.EntityFramework.Interfaces
 {
     /// <summary>
     /// Convenience methods to retrieve ambient DbContext instances. 
     /// </summary>
-    public interface IAmbientDbContextLocator
+    public interface IAmbientDataContextLocator
     {
         /// <summary>
         /// If called within the scope of a DbContextScope, gets or creates 
@@ -20,6 +20,6 @@ namespace Numero3.EntityFramework.Interfaces
         /// 
         /// Otherwise returns null. 
         /// </summary>
-        TDbContext Get<TDbContext>() where TDbContext : DbContext;
+        TDbContext Get<TDbContext>() where TDbContext : DataContext;
     }
 }

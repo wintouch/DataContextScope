@@ -5,7 +5,7 @@
  * This software may be modified and distributed under the terms
  * of the MIT license.  See the LICENSE file for details.
  */
-using System.Data.Entity;
+using System.Data.Linq;
 
 namespace Numero3.EntityFramework.Interfaces
 {
@@ -31,8 +31,8 @@ namespace Numero3.EntityFramework.Interfaces
 	/// In that case, you'll want to implement this interface and pass it to the DbContextScope
 	/// you're creating so that DbContextScope is able to create your DbContext instances correctly. 
     /// </remarks>
-    public interface IDbContextFactory
+    public interface IDataContextFactory
     {
-		TDbContext CreateDbContext<TDbContext>() where TDbContext : DbContext;
+		TDbContext CreateDbContext<TDbContext>() where TDbContext : DataContext;
     }
 }

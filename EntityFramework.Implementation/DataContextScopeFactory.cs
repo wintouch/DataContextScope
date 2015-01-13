@@ -11,45 +11,45 @@ using Numero3.EntityFramework.Interfaces;
 
 namespace Numero3.EntityFramework.Implementation
 {
-    public class DbContextScopeFactory : IDbContextScopeFactory
+    public class DataContextScopeFactory : IDataContextScopeFactory
     {
-        private readonly IDbContextFactory _dbContextFactory;
+        private readonly IDataContextFactory _dbContextFactory;
 
-        public DbContextScopeFactory(IDbContextFactory dbContextFactory = null)
+        public DataContextScopeFactory(IDataContextFactory dbContextFactory = null)
         {
             _dbContextFactory = dbContextFactory;
         }
 
-        public IDbContextScope Create(DbContextScopeOption joiningOption = DbContextScopeOption.JoinExisting)
+        public IDataContextScope Create(DataContextScopeOption joiningOption = DataContextScopeOption.JoinExisting)
         {
-            return new DbContextScope(
+            return new DataContextScope(
                 joiningOption: joiningOption, 
                 readOnly: false, 
                 isolationLevel: null, 
                 dbContextFactory: _dbContextFactory);
         }
 
-        public IDbContextReadOnlyScope CreateReadOnly(DbContextScopeOption joiningOption = DbContextScopeOption.JoinExisting)
+        public IDataContextReadOnlyScope CreateReadOnly(DataContextScopeOption joiningOption = DataContextScopeOption.JoinExisting)
         {
-            return new DbContextReadOnlyScope(
+            return new DataContextReadOnlyScope(
                 joiningOption: joiningOption, 
                 isolationLevel: null, 
                 dbContextFactory: _dbContextFactory);
         }
 
-        public IDbContextScope CreateWithTransaction(IsolationLevel isolationLevel)
+        public IDataContextScope CreateWithTransaction(IsolationLevel isolationLevel)
         {
-            return new DbContextScope(
-                joiningOption: DbContextScopeOption.ForceCreateNew, 
+            return new DataContextScope(
+                joiningOption: DataContextScopeOption.ForceCreateNew, 
                 readOnly: false, 
                 isolationLevel: isolationLevel, 
                 dbContextFactory: _dbContextFactory);
         }
 
-        public IDbContextReadOnlyScope CreateReadOnlyWithTransaction(IsolationLevel isolationLevel)
+        public IDataContextReadOnlyScope CreateReadOnlyWithTransaction(IsolationLevel isolationLevel)
         {
-            return new DbContextReadOnlyScope(
-                joiningOption: DbContextScopeOption.ForceCreateNew, 
+            return new DataContextReadOnlyScope(
+                joiningOption: DataContextScopeOption.ForceCreateNew, 
                 isolationLevel: isolationLevel, 
                 dbContextFactory: _dbContextFactory);
         }

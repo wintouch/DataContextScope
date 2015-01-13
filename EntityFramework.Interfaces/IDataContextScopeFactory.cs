@@ -14,7 +14,7 @@ namespace Numero3.EntityFramework.Interfaces
     /// Convenience methods to create a new ambient DbContextScope. This is the prefered method
     /// to create a DbContextScope.
     /// </summary>
-    public interface IDbContextScopeFactory
+    public interface IDataContextScopeFactory
     {
         /// <summary>
         /// Creates a new DbContextScope.
@@ -28,7 +28,7 @@ namespace Numero3.EntityFramework.Interfaces
         /// is an advanced feature that should be used with great care and only if you fully understand the
         /// implications of doing this.
         /// </summary>
-        IDbContextScope Create(DbContextScopeOption joiningOption = DbContextScopeOption.JoinExisting);
+        IDataContextScope Create(DataContextScopeOption joiningOption = DataContextScopeOption.JoinExisting);
 
         /// <summary>
         /// Creates a new DbContextScope for read-only queries.
@@ -42,7 +42,7 @@ namespace Numero3.EntityFramework.Interfaces
         /// is an advanced feature that should be used with great care and only if you fully understand the
         /// implications of doing this.
         /// </summary>
-        IDbContextReadOnlyScope CreateReadOnly(DbContextScopeOption joiningOption = DbContextScopeOption.JoinExisting);
+        IDataContextReadOnlyScope CreateReadOnly(DataContextScopeOption joiningOption = DataContextScopeOption.JoinExisting);
 
         /// <summary>
         /// Forces the creation of a new ambient DbContextScope (i.e. does not
@@ -58,7 +58,7 @@ namespace Numero3.EntityFramework.Interfaces
         /// This is an advanced feature that you should use very carefully
         /// and only if you fully understand the implications of doing this.
         /// </summary>
-        IDbContextScope CreateWithTransaction(IsolationLevel isolationLevel);
+        IDataContextScope CreateWithTransaction(IsolationLevel isolationLevel);
 
         /// <summary>
         /// Forces the creation of a new ambient read-only DbContextScope (i.e. does not
@@ -74,7 +74,7 @@ namespace Numero3.EntityFramework.Interfaces
         /// This is an advanced feature that you should use very carefully
         /// and only if you fully understand the implications of doing this.
         /// </summary>
-        IDbContextReadOnlyScope CreateReadOnlyWithTransaction(IsolationLevel isolationLevel);
+        IDataContextReadOnlyScope CreateReadOnlyWithTransaction(IsolationLevel isolationLevel);
 
         /// <summary>
         /// Temporarily suppresses the ambient DbContextScope. 

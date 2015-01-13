@@ -5,16 +5,16 @@
  * This software may be modified and distributed under the terms
  * of the MIT license.  See the LICENSE file for details.
  */
-using System.Data.Entity;
+using System.Data.Linq;
 using Numero3.EntityFramework.Interfaces;
 
 namespace Numero3.EntityFramework.Implementation
 {
-    public class AmbientDbContextLocator : IAmbientDbContextLocator
+    public class AmbientDataContextLocator : IAmbientDataContextLocator
     {
-        public TDbContext Get<TDbContext>() where TDbContext : DbContext
+        public TDbContext Get<TDbContext>() where TDbContext : DataContext
         {
-            var ambientDbContextScope = DbContextScope.GetAmbientScope();
+            var ambientDbContextScope = DataContextScope.GetAmbientScope();
             return ambientDbContextScope == null ? null : ambientDbContextScope.DbContexts.Get<TDbContext>();
         }
     }

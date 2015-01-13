@@ -10,7 +10,7 @@ namespace Numero3.EntityFramework.Interfaces
     /// <summary>
     /// Indicates whether or not a new DbContextScope will join the ambient scope.
     /// </summary>
-    public enum DbContextScopeOption
+    public enum DataContextScopeOption
     {
         /// <summary>
         /// Join the ambient DbContextScope if one exists. Creates a new
