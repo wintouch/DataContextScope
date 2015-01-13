@@ -8,9 +8,9 @@ namespace Numero3.EntityFramework.Demo.BusinessLogicServices
 {
 	public class UserEmailService
 	{
-		private readonly IDbContextScopeFactory _dbContextScopeFactory;
+		private readonly IDataContextScopeFactory _dbContextScopeFactory;
 
-		public UserEmailService(IDbContextScopeFactory dbContextScopeFactory)
+    public UserEmailService(IDataContextScopeFactory dbContextScopeFactory)
 		{
 			if (dbContextScopeFactory == null) throw new ArgumentNullException("dbContextScopeFactory");
 			_dbContextScopeFactory = dbContextScopeFactory;
@@ -46,9 +46,9 @@ namespace Numero3.EntityFramework.Demo.BusinessLogicServices
 
 			// Force the creation of a new DbContextScope so that the changes we make here are
 			// guaranteed to get persisted regardless of what happens after this method has completed.
-			using (var dbContextScope = _dbContextScopeFactory.Create(DbContextScopeOption.ForceCreateNew))
+			using (var dbContextScope = _dbContextScopeFactory.Create(DataContextScopeOption.ForceCreateNew))
 			{
-				var dbContext = dbContextScope.DbContexts.Get<UserManagementDbContext>();
+				var dbContext = dbContextScope.DataContexts.Get<UserManagementDbContext>();
 				var user = dbContext.Users.Find(userId);
 
 				if (user == null)

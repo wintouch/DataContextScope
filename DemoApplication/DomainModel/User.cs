@@ -1,16 +1,33 @@
 ﻿using System;
+using System.Data.Linq.Mapping;
 
 namespace Numero3.EntityFramework.Demo.DomainModel
 {
 	// Anemic model to keep this demo application simple.
+  [Table]
 	public class User
 	{
+     [Column(
+        IsPrimaryKey = true,
+        //IsDbGenerated = true,
+        AutoSync = AutoSync.OnInsert
+    )]
 		public Guid Id { get; set; }
+    
+    [Column]
 		public string Name { get; set; }
+
+    [Column]
 		public string Email { get; set; }
-		public int CreditScore { get; set; }
-		public bool WelcomeEmailSent { get; set; }
-		public DateTime CreatedOn { get; set; }
+    
+    [Column]
+    public int CreditScore { get; set; }
+    
+    [Column]
+    public bool WelcomeEmailSent { get; set; }
+    
+    [Column]
+    public DateTime CreatedOn { get; set; }
 
 		public override string ToString()
 		{

@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Threading.Tasks;
+using System.Linq;
 using Numero3.EntityFramework.Demo.DatabaseContext;
 using Numero3.EntityFramework.Demo.DomainModel;
 using Numero3.EntityFramework.Interfaces;
@@ -24,7 +24,7 @@ namespace Numero3.EntityFramework.Demo.Repositories
 	 */
 	public class UserRepository : IUserRepository
 	{
-		private readonly IAmbientDbContextLocator _ambientDbContextLocator;
+		private readonly IAmbientDataContextLocator _ambientDbContextLocator;
 
 		private UserManagementDbContext DbContext
 		{
@@ -39,7 +39,7 @@ namespace Numero3.EntityFramework.Demo.Repositories
 			}
 		}
 
-		public UserRepository(IAmbientDbContextLocator ambientDbContextLocator)
+		public UserRepository(IAmbientDataContextLocator ambientDbContextLocator)
 		{
 			if (ambientDbContextLocator == null) throw new ArgumentNullException("ambientDbContextLocator");
 			_ambientDbContextLocator = ambientDbContextLocator;
@@ -47,17 +47,12 @@ namespace Numero3.EntityFramework.Demo.Repositories
 
 		public User Get(Guid userId)
 		{
-			return DbContext.Users.Find(userId);
+      return DbContext.Users.Find(userId);
 		}
-
-		public Task<User> GetAsync(Guid userId)
-		{
-			return DbContext.Users.FindAsync(userId);
-		}
-
+		
 		public void Add(User user)
 		{
-			DbContext.Users.Add(user);
+			DbContext.Users.InsertOnSubmit(user);
 		}
 	}
 }

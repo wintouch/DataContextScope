@@ -13,8 +13,8 @@ namespace Numero3.EntityFramework.Demo
 		static void Main(string[] args)
 		{
 			//-- Poor-man DI - build our dependencies by hand for this demo
-			var dbContextScopeFactory = new DbContextScopeFactory();
-			var ambientDbContextLocator = new AmbientDbContextLocator();
+			var dbContextScopeFactory = new DataContextScopeFactory();
+			var ambientDbContextLocator = new AmbientDataContextLocator();
 			var userRepository = new UserRepository(ambientDbContextLocator);
 
 			var userCreationService = new UserCreationService(dbContextScopeFactory, userRepository);
@@ -76,17 +76,19 @@ namespace Numero3.EntityFramework.Demo
 				Console.WriteLine("Found {0} persisted users. If this number is 0, we're all good. If this number is not 0, we have a big problem.", maybeCreatedUsers.Count());
 
 				Console.WriteLine("Press enter to continue...");
-				Console.ReadLine();
+			  Console.ReadLine();
 
+        /* TODO: Add async support
 				//-- Demo of DbContextScope within an async flow
-				Console.WriteLine("Trying to retrieve two users John and Jeanne sequentially in an asynchronous manner...");
+				//Console.WriteLine("Trying to retrieve two users John and Jeanne sequentially in an asynchronous manner...");
 				// We're going to block on the async task here as we don't have a choice. No risk of deadlocking in any case as console apps
 				// don't have a synchronization context.
-				var usersFoundAsync = userQueryService.GetTwoUsersAsync(johnSpec.Id, jeanneSpec.Id).Result;
-				Console.WriteLine("OK. Found {0} persisted users.", usersFoundAsync.Count());
+				//var usersFoundAsync = userQueryService.GetTwoUsersAsync(johnSpec.Id, jeanneSpec.Id).Result;
+				//Console.WriteLine("OK. Found {0} persisted users.", usersFoundAsync.Count());
 
-				Console.WriteLine("Press enter to continue...");
-				Console.ReadLine();
+				//Console.WriteLine("Press enter to continue...");
+				//Console.ReadLine();
+        */
 
 				//-- Demo of explicit database transaction. 
 				Console.WriteLine("Trying to retrieve user John within a READ UNCOMMITTED database transaction...");
@@ -104,7 +106,7 @@ namespace Numero3.EntityFramework.Demo
 
 				using (var parentScope = dbContextScopeFactory.Create())
 				{
-					var parentDbContext = parentScope.DbContexts.Get<UserManagementDbContext>();
+					var parentDbContext = parentScope.DataContexts.Get<UserManagementDbContext>();
 
 					// Load John in the parent DbContext
 					var john = parentDbContext.Users.Find(johnSpec.Id);

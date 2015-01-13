@@ -73,6 +73,7 @@ namespace Numero3.EntityFramework.Implementation
 
                 if (_readOnly)
                 {
+                  //TOOD: IS THIS CORRECT?
                   dataContext.ObjectTrackingEnabled = false;
                 }
 

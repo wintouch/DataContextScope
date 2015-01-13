@@ -11,10 +11,10 @@ namespace Numero3.EntityFramework.Demo.BusinessLogicServices
 	 */
 	public class UserCreationService
 	{
-		private readonly IDbContextScopeFactory _dbContextScopeFactory;
+		private readonly IDataContextScopeFactory _dbContextScopeFactory;
 		private readonly IUserRepository _userRepository;
 
-		public UserCreationService(IDbContextScopeFactory dbContextScopeFactory, IUserRepository userRepository)
+    public UserCreationService(IDataContextScopeFactory dbContextScopeFactory, IUserRepository userRepository)
 		{
 			if (dbContextScopeFactory == null) throw new ArgumentNullException("dbContextScopeFactory");
 			if (userRepository == null) throw new ArgumentNullException("userRepository");
