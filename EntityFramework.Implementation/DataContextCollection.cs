@@ -34,14 +34,14 @@ namespace Numero3.EntityFramework.Implementation
         private Dictionary<Type, DataContext> _initializedDataContexts;
         private Dictionary<DataContext, DbTransaction> _transactions; 
         private IsolationLevel? _isolationLevel;
-        private readonly IDataContextFactory _dbContextFactory;
+        private readonly IDataContextFactory _dataContextFactory;
         private bool _disposed;
         private bool _completed;
         private bool _readOnly;
 
         internal Dictionary<Type, DataContext> InitializedDataContexts { get { return _initializedDataContexts; } }
 
-        public DataContextCollection(bool readOnly = false, IsolationLevel? isolationLevel = null, IDataContextFactory dbContextFactory = null)
+        public DataContextCollection(bool readOnly = false, IsolationLevel? isolationLevel = null, IDataContextFactory dataContextFactory = null)
         {
             _disposed = false;
             _completed = false;
@@ -51,7 +51,7 @@ namespace Numero3.EntityFramework.Implementation
 
             _readOnly = readOnly;
             _isolationLevel = isolationLevel;
-            _dbContextFactory = dbContextFactory;
+            _dataContextFactory = dataContextFactory;
         }
 
         public TDataContext Get<TDataContext>() where TDataContext : DataContext
@@ -65,22 +65,22 @@ namespace Numero3.EntityFramework.Implementation
             {
                 // First time we've been asked for this particular DataContext type.
                 // Create one, cache it and start its database transaction if needed.
-                var dbContext = _dbContextFactory != null
-                    ? _dbContextFactory.CreateDataContext<TDataContext>()
+                var dataContext = _dataContextFactory != null
+                    ? _dataContextFactory.CreateDataContext<TDataContext>()
                     : Activator.CreateInstance<TDataContext>();
 
-                _initializedDataContexts.Add(requestedType, dbContext);
+                _initializedDataContexts.Add(requestedType, dataContext);
 
                 if (_readOnly)
                 {
-                  dbContext.ObjectTrackingEnabled = false;
+                  dataContext.ObjectTrackingEnabled = false;
                 }
 
                 if (_isolationLevel.HasValue)
                 {
                  
-                    var tran = dbContext.BeginTransaction(_isolationLevel.Value);
-                    _transactions.Add(dbContext, tran);
+                    var tran = dataContext.BeginTransaction(_isolationLevel.Value);
+                    _transactions.Add(dataContext, tran);
                 }
             }
 
@@ -114,17 +114,17 @@ namespace Numero3.EntityFramework.Implementation
 
             var c = 0;
 
-            foreach (var dbContext in _initializedDataContexts.Values)
+            foreach (var dataContext in _initializedDataContexts.Values)
             {
                 try
                 {
                     if (!_readOnly)
                     {
-                        c += dbContext.SaveChanges();
+                        c += dataContext.SaveChanges();
                     }
 
                     // If we've started an explicit database transaction, time to commit it now.
-                    var tran = GetValueOrDefault(_transactions, dbContext);
+                    var tran = GetValueOrDefault(_transactions, dataContext);
                     if (tran != null)
                     {
                         tran.Commit();
@@ -166,17 +166,17 @@ namespace Numero3.EntityFramework.Implementation
 
         //    var c = 0;
 
-        //    foreach (var dbContext in _initializedDataContexts.Values)
+        //    foreach (var dataContext in _initializedDataContexts.Values)
         //    {
         //        try
         //        {
         //            if (!_readOnly)
         //            {
-        //                c += await dbContext.SaveChangesAsync(cancelToken);
+        //                c += await dataContext.SaveChangesAsync(cancelToken);
         //            }
 
         //            // If we've started an explicit database transaction, time to commit it now.
-        //            var tran = GetValueOrDefault(_transactions, dbContext);
+        //            var tran = GetValueOrDefault(_transactions, dataContext);
         //            if (tran != null)
         //            {
         //                tran.Commit();
@@ -207,7 +207,7 @@ namespace Numero3.EntityFramework.Implementation
 
             ExceptionDispatchInfo lastError = null;
 
-            foreach (var dbContext in _initializedDataContexts.Values)
+            foreach (var dataContext in _initializedDataContexts.Values)
             {
                 // There's no need to explicitly rollback changes in a DataContext as
                 // DataContext doesn't save any changes until its SaveChanges() method is called.
@@ -215,7 +215,7 @@ namespace Numero3.EntityFramework.Implementation
                 // method. 
 
                 // But if we've started an explicit database transaction, then we must roll it back.
-                var tran = GetValueOrDefault(_transactions, dbContext);
+                var tran = GetValueOrDefault(_transactions, dataContext);
                 if (tran != null)
                 {
                     try
@@ -259,11 +259,11 @@ namespace Numero3.EntityFramework.Implementation
                 }
             }
 
-            foreach (var dbContext in _initializedDataContexts.Values)
+            foreach (var dataContext in _initializedDataContexts.Values)
             {
                 try
                 {
-                    dbContext.Dispose();
+                    dataContext.Dispose();
                 }
                 catch (Exception e)
                 {

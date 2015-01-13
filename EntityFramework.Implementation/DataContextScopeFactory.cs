@@ -13,11 +13,11 @@ namespace Numero3.EntityFramework.Implementation
 {
     public class DataContextScopeFactory : IDataContextScopeFactory
     {
-        private readonly IDataContextFactory _dbContextFactory;
+        private readonly IDataContextFactory _dataContextFactory;
 
-        public DataContextScopeFactory(IDataContextFactory dbContextFactory = null)
+        public DataContextScopeFactory(IDataContextFactory dataContextFactory = null)
         {
-            _dbContextFactory = dbContextFactory;
+            _dataContextFactory = dataContextFactory;
         }
 
         public IDataContextScope Create(DataContextScopeOption joiningOption = DataContextScopeOption.JoinExisting)
@@ -26,7 +26,7 @@ namespace Numero3.EntityFramework.Implementation
                 joiningOption: joiningOption, 
                 readOnly: false, 
                 isolationLevel: null, 
-                dbContextFactory: _dbContextFactory);
+                dataContextFactory: _dataContextFactory);
         }
 
         public IDataContextReadOnlyScope CreateReadOnly(DataContextScopeOption joiningOption = DataContextScopeOption.JoinExisting)
@@ -34,7 +34,7 @@ namespace Numero3.EntityFramework.Implementation
             return new DataContextReadOnlyScope(
                 joiningOption: joiningOption, 
                 isolationLevel: null, 
-                dbContextFactory: _dbContextFactory);
+                dataContextFactory: _dataContextFactory);
         }
 
         public IDataContextScope CreateWithTransaction(IsolationLevel isolationLevel)
@@ -43,7 +43,7 @@ namespace Numero3.EntityFramework.Implementation
                 joiningOption: DataContextScopeOption.ForceCreateNew, 
                 readOnly: false, 
                 isolationLevel: isolationLevel, 
-                dbContextFactory: _dbContextFactory);
+                dataContextFactory: _dataContextFactory);
         }
 
         public IDataContextReadOnlyScope CreateReadOnlyWithTransaction(IsolationLevel isolationLevel)
@@ -51,7 +51,7 @@ namespace Numero3.EntityFramework.Implementation
             return new DataContextReadOnlyScope(
                 joiningOption: DataContextScopeOption.ForceCreateNew, 
                 isolationLevel: isolationLevel, 
-                dbContextFactory: _dbContextFactory);
+                dataContextFactory: _dataContextFactory);
         }
 
         public IDisposable SuppressAmbientContext()

@@ -16,17 +16,17 @@ namespace Numero3.EntityFramework.Implementation
 
         public IDataContextCollection DataContexts { get { return _internalScope.DataContexts; } }
 
-        public DataContextReadOnlyScope(IDataContextFactory dbContextFactory = null)
-            : this(joiningOption: DataContextScopeOption.JoinExisting, isolationLevel: null, dbContextFactory: dbContextFactory)
+        public DataContextReadOnlyScope(IDataContextFactory dataContextFactory = null)
+            : this(joiningOption: DataContextScopeOption.JoinExisting, isolationLevel: null, dataContextFactory: dataContextFactory)
         {}
 
-        public DataContextReadOnlyScope(IsolationLevel isolationLevel, IDataContextFactory dbContextFactory = null)
-            : this(joiningOption: DataContextScopeOption.ForceCreateNew, isolationLevel: isolationLevel, dbContextFactory: dbContextFactory)
+        public DataContextReadOnlyScope(IsolationLevel isolationLevel, IDataContextFactory dataContextFactory = null)
+            : this(joiningOption: DataContextScopeOption.ForceCreateNew, isolationLevel: isolationLevel, dataContextFactory: dataContextFactory)
         { }
 
-        public DataContextReadOnlyScope(DataContextScopeOption joiningOption, IsolationLevel? isolationLevel, IDataContextFactory dbContextFactory = null)
+        public DataContextReadOnlyScope(DataContextScopeOption joiningOption, IsolationLevel? isolationLevel, IDataContextFactory dataContextFactory = null)
         {
-            _internalScope = new DataContextScope(joiningOption: joiningOption, readOnly: true, isolationLevel: isolationLevel, dbContextFactory: dbContextFactory);
+            _internalScope = new DataContextScope(joiningOption: joiningOption, readOnly: true, isolationLevel: isolationLevel, dataContextFactory: dataContextFactory);
         }
 
         public void Dispose()

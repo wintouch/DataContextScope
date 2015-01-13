@@ -25,19 +25,19 @@ namespace Numero3.EntityFramework.Implementation
     private bool _completed;
     private bool _nested;
     private DataContextScope _parentScope;
-    private DataContextCollection _dbContexts;
+    private DataContextCollection _dataContexts;
 
-    public IDataContextCollection DataContexts { get { return _dbContexts; } }
+    public IDataContextCollection DataContexts { get { return _dataContexts; } }
 
-    public DataContextScope(IDataContextFactory dbContextFactory = null) :
-      this(joiningOption: DataContextScopeOption.JoinExisting, readOnly: false, isolationLevel: null, dbContextFactory: dbContextFactory)
+    public DataContextScope(IDataContextFactory dataContextFactory = null) :
+      this(joiningOption: DataContextScopeOption.JoinExisting, readOnly: false, isolationLevel: null, dataContextFactory: dataContextFactory)
     { }
 
-    public DataContextScope(bool readOnly, IDataContextFactory dbContextFactory = null)
-      : this(joiningOption: DataContextScopeOption.JoinExisting, readOnly: readOnly, isolationLevel: null, dbContextFactory: dbContextFactory)
+    public DataContextScope(bool readOnly, IDataContextFactory dataContextFactory = null)
+      : this(joiningOption: DataContextScopeOption.JoinExisting, readOnly: readOnly, isolationLevel: null, dataContextFactory: dataContextFactory)
     { }
 
-    public DataContextScope(DataContextScopeOption joiningOption, bool readOnly, IsolationLevel? isolationLevel, IDataContextFactory dbContextFactory = null)
+    public DataContextScope(DataContextScopeOption joiningOption, bool readOnly, IsolationLevel? isolationLevel, IDataContextFactory dataContextFactory = null)
     {
       if (isolationLevel.HasValue && joiningOption == DataContextScopeOption.JoinExisting)
         throw new ArgumentException("Cannot join an ambient DataContextScope when an explicit database transaction is required. When requiring explicit database transactions to be used (i.e. when the 'isolationLevel' parameter is set), you must not also ask to join the ambient context (i.e. the 'joinAmbient' parameter must be set to false).");
@@ -55,12 +55,12 @@ namespace Numero3.EntityFramework.Implementation
         }
 
         _nested = true;
-        _dbContexts = _parentScope._dbContexts;
+        _dataContexts = _parentScope._dataContexts;
       }
       else
       {
         _nested = false;
-        _dbContexts = new DataContextCollection(readOnly, isolationLevel, dbContextFactory);
+        _dataContexts = new DataContextCollection(readOnly, isolationLevel, dataContextFactory);
       }
 
       SetAmbientScope(this);
@@ -114,17 +114,17 @@ namespace Numero3.EntityFramework.Implementation
 
     private int CommitInternal()
     {
-      return _dbContexts.Commit();
+      return _dataContexts.Commit();
     }
 
     //private Task<int> CommitInternalAsync(CancellationToken cancelToken)
     //{
-    //    return _dbContexts.CommitAsync(cancelToken);
+    //    return _dataContexts.CommitAsync(cancelToken);
     //}
 
     private void RollbackInternal()
     {
-      _dbContexts.Rollback();
+      _dataContexts.Rollback();
     }
 
     public void RefreshEntitiesInParentScope(IEnumerable entities)
@@ -154,10 +154,10 @@ namespace Numero3.EntityFramework.Implementation
       //// So we must cast the DataContext instances to IObjectContextAdapter in order to access their ObjectContext.
       //// This cast is completely safe.
 
-      //foreach (IDataContextAdapter contextInCurrentScope in _dbContexts.InitializedDataContexts.Values)
+      //foreach (IDataContextAdapter contextInCurrentScope in _dataContexts.InitializedDataContexts.Values)
       //{
       //  var correspondingParentContext =
-      //      _parentScope._dbContexts.InitializedDataContexts.Values.SingleOrDefault(parentContext => parentContext.GetType() == contextInCurrentScope.GetType())
+      //      _parentScope._dataContexts.InitializedDataContexts.Values.SingleOrDefault(parentContext => parentContext.GetType() == contextInCurrentScope.GetType())
       //       as IDataContextAdapter;
 
       //  if (correspondingParentContext == null)
@@ -207,10 +207,10 @@ namespace Numero3.EntityFramework.Implementation
   //    if (_nested)
   //      return;
 
-  //    foreach (IObjectContextAdapter contextInCurrentScope in _dbContexts.InitializedDataContexts.Values)
+  //    foreach (IObjectContextAdapter contextInCurrentScope in _dataContexts.InitializedDataContexts.Values)
   //    {
   //      var correspondingParentContext =
-  //          _parentScope._dbContexts.InitializedDataContexts.Values.SingleOrDefault(parentContext => parentContext.GetType() == contextInCurrentScope.GetType())
+  //          _parentScope._dataContexts.InitializedDataContexts.Values.SingleOrDefault(parentContext => parentContext.GetType() == contextInCurrentScope.GetType())
   //as IObjectContextAdapter;
 
   //      if (correspondingParentContext == null)
@@ -270,7 +270,7 @@ namespace Numero3.EntityFramework.Implementation
           _completed = true;
         }
 
-        _dbContexts.Dispose();
+        _dataContexts.Dispose();
       }
 
       // Pop ourself from the ambient scope stack
@@ -427,7 +427,7 @@ Stack Trace:
     private InstanceIdentifier _instanceIdentifier = new InstanceIdentifier();
 
     /// <summary>
-    /// Makes the provided 'dbContextScope' available as the the ambient scope via the CallContext.
+    /// Makes the provided 'dataContextScope' available as the the ambient scope via the CallContext.
     /// </summary>
     internal static void SetAmbientScope(DataContextScope newAmbientScope)
     {
