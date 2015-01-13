@@ -18,20 +18,20 @@ using Numero3.EntityFramework.Interfaces;
 namespace Numero3.EntityFramework.Implementation
 {
     /// <summary>
-    /// As its name suggests, DbContextCollection maintains a collection of DbContext instances.
+    /// As its name suggests, DataContextCollection maintains a collection of DataContext instances.
     /// 
     /// What it does in a nutshell:
-    /// - Lazily instantiates DbContext instances when its Get Of TDbContext () method is called
+    /// - Lazily instantiates DataContext instances when its Get Of TDataContext () method is called
     /// (and optionally starts an explicit database transaction).
-    /// - Keeps track of the DbContext instances it created so that it can return the existing
-    /// instance when asked for a DbContext of a specific type.
-    /// - Takes care of committing / rolling back changes and transactions on all the DbContext
+    /// - Keeps track of the DataContext instances it created so that it can return the existing
+    /// instance when asked for a DataContext of a specific type.
+    /// - Takes care of committing / rolling back changes and transactions on all the DataContext
     /// instances it created when its Commit() or Rollback() method is called.
     /// 
     /// </summary>
     public class DataContextCollection : IDataContextCollection
     {
-        private Dictionary<Type, DataContext> _initializedDbContexts;
+        private Dictionary<Type, DataContext> _initializedDataContexts;
         private Dictionary<DataContext, DbTransaction> _transactions; 
         private IsolationLevel? _isolationLevel;
         private readonly IDataContextFactory _dbContextFactory;
@@ -39,14 +39,14 @@ namespace Numero3.EntityFramework.Implementation
         private bool _completed;
         private bool _readOnly;
 
-        internal Dictionary<Type, DataContext> InitializedDbContexts { get { return _initializedDbContexts; } }
+        internal Dictionary<Type, DataContext> InitializedDataContexts { get { return _initializedDataContexts; } }
 
         public DataContextCollection(bool readOnly = false, IsolationLevel? isolationLevel = null, IDataContextFactory dbContextFactory = null)
         {
             _disposed = false;
             _completed = false;
 
-            _initializedDbContexts = new Dictionary<Type, DataContext>();
+            _initializedDataContexts = new Dictionary<Type, DataContext>();
             _transactions = new Dictionary<DataContext, DbTransaction>();
 
             _readOnly = readOnly;
@@ -54,22 +54,22 @@ namespace Numero3.EntityFramework.Implementation
             _dbContextFactory = dbContextFactory;
         }
 
-        public TDbContext Get<TDbContext>() where TDbContext : DataContext
+        public TDataContext Get<TDataContext>() where TDataContext : DataContext
         {
             if (_disposed)
-                throw new ObjectDisposedException("DbContextCollection");
+                throw new ObjectDisposedException("DataContextCollection");
 
-            var requestedType = typeof(TDbContext);
+            var requestedType = typeof(TDataContext);
 
-            if (!_initializedDbContexts.ContainsKey(requestedType))
+            if (!_initializedDataContexts.ContainsKey(requestedType))
             {
-                // First time we've been asked for this particular DbContext type.
+                // First time we've been asked for this particular DataContext type.
                 // Create one, cache it and start its database transaction if needed.
                 var dbContext = _dbContextFactory != null
-                    ? _dbContextFactory.CreateDbContext<TDbContext>()
-                    : Activator.CreateInstance<TDbContext>();
+                    ? _dbContextFactory.CreateDataContext<TDataContext>()
+                    : Activator.CreateInstance<TDataContext>();
 
-                _initializedDbContexts.Add(requestedType, dbContext);
+                _initializedDataContexts.Add(requestedType, dbContext);
 
                 if (_readOnly)
                 {
@@ -84,29 +84,29 @@ namespace Numero3.EntityFramework.Implementation
                 }
             }
 
-            return _initializedDbContexts[requestedType]  as TDbContext;
+            return _initializedDataContexts[requestedType]  as TDataContext;
         }
 
         public int Commit()
         {
             if (_disposed)
-                throw new ObjectDisposedException("DbContextCollection");
+                throw new ObjectDisposedException("DataContextCollection");
             if (_completed)
-                throw new InvalidOperationException("You can't call Commit() or Rollback() more than once on a DbContextCollection. All the changes in the DbContext instances managed by this collection have already been saved or rollback and all database transactions have been completed and closed. If you wish to make more data changes, create a new DbContextCollection and make your changes there.");
+                throw new InvalidOperationException("You can't call Commit() or Rollback() more than once on a DataContextCollection. All the changes in the DataContext instances managed by this collection have already been saved or rollback and all database transactions have been completed and closed. If you wish to make more data changes, create a new DataContextCollection and make your changes there.");
 
             // Best effort. You'll note that we're not actually implementing an atomic commit 
-            // here. It entirely possible that one DbContext instance will be committed successfully
+            // here. It entirely possible that one DataContext instance will be committed successfully
             // and another will fail. Implementing an atomic commit would require us to wrap
             // all of this in a TransactionScope. The problem with TransactionScope is that 
             // the database transaction it creates may be automatically promoted to a 
-            // distributed transaction if our DbContext instances happen to be using different 
+            // distributed transaction if our DataContext instances happen to be using different 
             // databases. And that would require the DTC service (Distributed Transaction Coordinator)
             // to be enabled on all of our live and dev servers as well as on all of our dev workstations.
             // Otherwise the whole thing would blow up at runtime. 
 
             // In practice, if our services are implemented following a reasonably DDD approach,
             // a business transaction (i.e. a service method) should only modify entities in a single
-            // DbContext. So we should never find ourselves in a situation where two DbContext instances
+            // DataContext. So we should never find ourselves in a situation where two DataContext instances
             // contain uncommitted changes here. We should therefore never be in a situation where the below
             // would result in a partial commit. 
 
@@ -114,7 +114,7 @@ namespace Numero3.EntityFramework.Implementation
 
             var c = 0;
 
-            foreach (var dbContext in _initializedDbContexts.Values)
+            foreach (var dbContext in _initializedDataContexts.Values)
             {
                 try
                 {
@@ -156,9 +156,9 @@ namespace Numero3.EntityFramework.Implementation
         //    if (cancelToken == null)
         //        throw new ArgumentNullException("cancelToken");
         //    if (_disposed)
-        //        throw new ObjectDisposedException("DbContextCollection");
+        //        throw new ObjectDisposedException("DataContextCollection");
         //    if (_completed)
-        //        throw new InvalidOperationException("You can't call Commit() or Rollback() more than once on a DbContextCollection. All the changes in the DbContext instances managed by this collection have already been saved or rollback and all database transactions have been completed and closed. If you wish to make more data changes, create a new DbContextCollection and make your changes there.");
+        //        throw new InvalidOperationException("You can't call Commit() or Rollback() more than once on a DataContextCollection. All the changes in the DataContext instances managed by this collection have already been saved or rollback and all database transactions have been completed and closed. If you wish to make more data changes, create a new DataContextCollection and make your changes there.");
 
         //    // See comments in the sync version of this method for more details.
 
@@ -166,7 +166,7 @@ namespace Numero3.EntityFramework.Implementation
 
         //    var c = 0;
 
-        //    foreach (var dbContext in _initializedDbContexts.Values)
+        //    foreach (var dbContext in _initializedDataContexts.Values)
         //    {
         //        try
         //        {
@@ -201,17 +201,17 @@ namespace Numero3.EntityFramework.Implementation
         public void Rollback()
         {
             if (_disposed)
-                throw new ObjectDisposedException("DbContextCollection");
+                throw new ObjectDisposedException("DataContextCollection");
             if (_completed)
-                throw new InvalidOperationException("You can't call Commit() or Rollback() more than once on a DbContextCollection. All the changes in the DbContext instances managed by this collection have already been saved or rollback and all database transactions have been completed and closed. If you wish to make more data changes, create a new DbContextCollection and make your changes there.");
+                throw new InvalidOperationException("You can't call Commit() or Rollback() more than once on a DataContextCollection. All the changes in the DataContext instances managed by this collection have already been saved or rollback and all database transactions have been completed and closed. If you wish to make more data changes, create a new DataContextCollection and make your changes there.");
 
             ExceptionDispatchInfo lastError = null;
 
-            foreach (var dbContext in _initializedDbContexts.Values)
+            foreach (var dbContext in _initializedDataContexts.Values)
             {
-                // There's no need to explicitly rollback changes in a DbContext as
-                // DbContext doesn't save any changes until its SaveChanges() method is called.
-                // So "rolling back" for a DbContext simply means not calling its SaveChanges()
+                // There's no need to explicitly rollback changes in a DataContext as
+                // DataContext doesn't save any changes until its SaveChanges() method is called.
+                // So "rolling back" for a DataContext simply means not calling its SaveChanges()
                 // method. 
 
                 // But if we've started an explicit database transaction, then we must roll it back.
@@ -259,7 +259,7 @@ namespace Numero3.EntityFramework.Implementation
                 }
             }
 
-            foreach (var dbContext in _initializedDbContexts.Values)
+            foreach (var dbContext in _initializedDataContexts.Values)
             {
                 try
                 {
@@ -271,7 +271,7 @@ namespace Numero3.EntityFramework.Implementation
                 }
             }
 
-            _initializedDbContexts.Clear();
+            _initializedDataContexts.Clear();
             _disposed = true;
         }
 

@@ -13,61 +13,61 @@ using System.Threading.Tasks;
 namespace Numero3.EntityFramework.Interfaces
 {
   /// <summary>
-  /// Creates and manages the DbContext instances used by this code block. 
+  /// Creates and manages the DataContext instances used by this code block. 
   /// 
-  /// You typically use a DbContextScope at the business logic service level. Each 
+  /// You typically use a DataContextScope at the business logic service level. Each 
   /// business transaction (i.e. each service method) that uses Entity Framework must
-  /// be wrapped in a DbContextScope, ensuring that the same DbContext instances 
+  /// be wrapped in a DataContextScope, ensuring that the same DataContext instances 
   /// are used throughout the business transaction and are committed or rolled 
   /// back atomically.
   /// 
-  /// Think of it as TransactionScope but for managing DbContext instances instead 
-  /// of database transactions. Just like a TransactionScope, a DbContextScope is 
+  /// Think of it as TransactionScope but for managing DataContext instances instead 
+  /// of database transactions. Just like a TransactionScope, a DataContextScope is 
   /// ambient, can be nested and supports async execution flows.
   /// 
   /// And just like TransactionScope, it does not support parallel execution flows. 
-  /// You therefore MUST suppress the ambient DbContextScope before kicking off parallel 
-  /// tasks or you will end up with multiple threads attempting to use the same DbContext
-  /// instances (use IDbContextScopeFactory.SuppressAmbientContext() for this).
+  /// You therefore MUST suppress the ambient DataContextScope before kicking off parallel 
+  /// tasks or you will end up with multiple threads attempting to use the same DataContext
+  /// instances (use IDataContextScopeFactory.SuppressAmbientContext() for this).
   /// 
-  /// You can access the DbContext instances that this scopes manages via either:
-  /// - its DbContexts property, or
-  /// - an IAmbientDbContextLocator
+  /// You can access the DataContext instances that this scopes manages via either:
+  /// - its DataContexts property, or
+  /// - an IAmbientDataContextLocator
   /// 
   /// (you would typically use the later in the repository / query layer to allow your repository
-  /// or query classes to access the ambient DbContext instances without giving them access to the actual
-  /// DbContextScope).
+  /// or query classes to access the ambient DataContext instances without giving them access to the actual
+  /// DataContextScope).
   /// 
   /// </summary>
   public interface IDataContextScope : IDisposable
   {
     /// <summary>
-    /// Saves the changes in all the DbContext instances that were created within this scope.
+    /// Saves the changes in all the DataContext instances that were created within this scope.
     /// This method can only be called once per scope.
     /// </summary>
     int SaveChanges();
 
     /// <summary>
-    /// Saves the changes in all the DbContext instances that were created within this scope.
+    /// Saves the changes in all the DataContext instances that were created within this scope.
     /// This method can only be called once per scope.
     /// </summary>
     //Task<int> SaveChangesAsync();
 
     /// <summary>
-    /// Saves the changes in all the DbContext instances that were created within this scope.
+    /// Saves the changes in all the DataContext instances that were created within this scope.
     /// This method can only be called once per scope.
     /// </summary>
     //Task<int> SaveChangesAsync(CancellationToken cancelToken);
 
     /// <summary>
     /// Reloads the provided persistent entities from the data store
-    /// in the DbContext instances managed by the parent scope. 
+    /// in the DataContext instances managed by the parent scope. 
     /// 
-    /// If there is no parent scope (i.e. if this DbContextScope
+    /// If there is no parent scope (i.e. if this DataContextScope
     /// if the top-level scope), does nothing.
     /// 
     /// This is useful when you have forced the creation of a new
-    /// DbContextScope and want to make sure that the parent scope
+    /// DataContextScope and want to make sure that the parent scope
     /// (if any) is aware of the entities you've modified in the 
     /// inner scope.
     /// 
@@ -78,13 +78,13 @@ namespace Numero3.EntityFramework.Interfaces
 
     /// <summary>
     /// Reloads the provided persistent entities from the data store
-    /// in the DbContext instances managed by the parent scope. 
+    /// in the DataContext instances managed by the parent scope. 
     /// 
-    /// If there is no parent scope (i.e. if this DbContextScope
+    /// If there is no parent scope (i.e. if this DataContextScope
     /// if the top-level scope), does nothing.
     /// 
     /// This is useful when you have forced the creation of a new
-    /// DbContextScope and want to make sure that the parent scope
+    /// DataContextScope and want to make sure that the parent scope
     /// (if any) is aware of the entities you've modified in the 
     /// inner scope.
     /// 
@@ -94,9 +94,9 @@ namespace Numero3.EntityFramework.Interfaces
     //Task RefreshEntitiesInParentScopeAsync(IEnumerable entities);
 
     /// <summary>
-    /// The DbContext instances that this DbContextScope manages. Don't call SaveChanges() on the DbContext themselves!
+    /// The DataContext instances that this DataContextScope manages. Don't call SaveChanges() on the DataContext themselves!
     /// Save the scope instead.
     /// </summary>
-    IDataContextCollection DbContexts { get; }
+    IDataContextCollection DataContexts { get; }
   }
 }

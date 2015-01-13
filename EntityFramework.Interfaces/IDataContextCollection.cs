@@ -11,13 +11,13 @@ using System.Data.Linq;
 namespace Numero3.EntityFramework.Interfaces
 {
     /// <summary>
-    /// Maintains a list of lazily-created DbContext instances.
+    /// Maintains a list of lazily-created DataContext instances.
     /// </summary>
     public interface IDataContextCollection : IDisposable
     {
         /// <summary>
-        /// Get or create a DbContext instance of the specified type. 
+        /// Get or create a DataContext instance of the specified type. 
         /// </summary>
-		TDbContext Get<TDbContext>() where TDbContext : DataContext;
+		TDataContext Get<TDataContext>() where TDataContext : DataContext;
     }
 }

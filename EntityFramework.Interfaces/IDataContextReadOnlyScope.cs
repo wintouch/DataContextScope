@@ -10,14 +10,14 @@ using System;
 namespace Numero3.EntityFramework.Interfaces
 {
     /// <summary>
-    /// A read-only DbContextScope. Refer to the comments for IDbContextScope
+    /// A read-only DataContextScope. Refer to the comments for IDataContextScope
     /// for more details.
     /// </summary>
     public interface IDataContextReadOnlyScope : IDisposable
     {
         /// <summary>
-        /// The DbContext instances that this DbContextScope manages.
+        /// The DataContext instances that this DataContextScope manages.
         /// </summary>
-        IDataContextCollection DbContexts { get; }
+        IDataContextCollection DataContexts { get; }
     }
 }

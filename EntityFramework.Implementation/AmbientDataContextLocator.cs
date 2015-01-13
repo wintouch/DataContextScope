@@ -12,10 +12,10 @@ namespace Numero3.EntityFramework.Implementation
 {
     public class AmbientDataContextLocator : IAmbientDataContextLocator
     {
-        public TDbContext Get<TDbContext>() where TDbContext : DataContext
+        public TDataContext Get<TDataContext>() where TDataContext : DataContext
         {
-            var ambientDbContextScope = DataContextScope.GetAmbientScope();
-            return ambientDbContextScope == null ? null : ambientDbContextScope.DbContexts.Get<TDbContext>();
+            var ambientDataContextScope = DataContextScope.GetAmbientScope();
+            return ambientDataContextScope == null ? null : ambientDataContextScope.DataContexts.Get<TDataContext>();
         }
     }
 }

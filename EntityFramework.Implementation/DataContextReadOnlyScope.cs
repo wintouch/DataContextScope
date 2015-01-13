@@ -14,7 +14,7 @@ namespace Numero3.EntityFramework.Implementation
     {
         private DataContextScope _internalScope;
 
-        public IDataContextCollection DbContexts { get { return _internalScope.DbContexts; } }
+        public IDataContextCollection DataContexts { get { return _internalScope.DataContexts; } }
 
         public DataContextReadOnlyScope(IDataContextFactory dbContextFactory = null)
             : this(joiningOption: DataContextScopeOption.JoinExisting, isolationLevel: null, dbContextFactory: dbContextFactory)

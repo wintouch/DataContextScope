@@ -10,16 +10,16 @@ using System.Data.Linq;
 namespace Numero3.EntityFramework.Interfaces
 {
     /// <summary>
-    /// Convenience methods to retrieve ambient DbContext instances. 
+    /// Convenience methods to retrieve ambient DataContext instances. 
     /// </summary>
     public interface IAmbientDataContextLocator
     {
         /// <summary>
-        /// If called within the scope of a DbContextScope, gets or creates 
-        /// the ambient DbContext instance for the provided DbContext type. 
+        /// If called within the scope of a DataContextScope, gets or creates 
+        /// the ambient DataContext instance for the provided DataContext type. 
         /// 
         /// Otherwise returns null. 
         /// </summary>
-        TDbContext Get<TDbContext>() where TDbContext : DataContext;
+        TDataContext Get<TDataContext>() where TDataContext : DataContext;
     }
 }
