@@ -48,81 +48,84 @@ namespace Numero3.EntityFramework.Implementation
   public class ObjectStateManager
   {
     private readonly DataContext _context;
+    private readonly IDataServices _dataServices;
 
     internal ObjectStateManager(DataContext context)
     {
       _context = context;
+      _dataServices = CommonDataServicesWrapper.CreateDataServiceServicesWrapper(context);
     }
 
-    public bool TryGetObjectStateEntry(object toRefresh, out ObjectStateEntry stateInCurrentScope)
+    public bool TryGetObjectStateEntry(object entity, out ObjectStateEntry entry)
     {
-      Type entityType = toRefresh.GetType();
-      //TODO: Add support composite primary keys.
-
-      Property primaryKeyProeprty = DataContextHelper.GetPrimaryKeys(entityType)[0];
-      object primaryKeyValue = primaryKeyProeprty.GetValue(toRefresh);
-      EntityKey key = new EntityKey(entityType, primaryKeyProeprty, primaryKeyValue);
-
+      Type entityType = entity.GetType();
+      var primaryKeys = DataContextHelper.GetPrimaryKeys(entityType);
+      EntityKey key = new EntityKey(entityType, primaryKeys.Select(x => new KeyValuePair<Property, object>(x, x.GetValue(entity))));
       ChangeSet changeSet = _context.GetChangeSet();
-      if (changeSet.Inserts.Any(x => x == toRefresh))
+      
+      if (changeSet.Inserts.Any(x => x == entity))
       {
-        stateInCurrentScope = new ObjectStateEntry { EntityKey = key, Entity = toRefresh, State = EntityState.Added };
+        entry = new ObjectStateEntry { EntityKey = key, Entity = entity, State = EntityState.Added };
         return true;
       }
 
-      if (changeSet.Updates.Any(x => x == toRefresh))
+      if (changeSet.Updates.Any(x => x == entity))
       {
-        stateInCurrentScope = new ObjectStateEntry { EntityKey = key, Entity = toRefresh, State = EntityState.Modified };
+        entry = new ObjectStateEntry { EntityKey = key, Entity = entity, State = EntityState.Modified };
         return true;
       }
 
-      if (changeSet.Deletes.Any(x => x == toRefresh))
+      if (changeSet.Deletes.Any(x => x == entity))
       {
-        stateInCurrentScope = new ObjectStateEntry { EntityKey = key, Entity = toRefresh, State = EntityState.Deleted };
+        entry = new ObjectStateEntry { EntityKey = key, Entity = entity, State = EntityState.Deleted };
         return true;
       }
 
-      stateInCurrentScope = new ObjectStateEntry { EntityKey = key, Entity = toRefresh, State = EntityState.Unchanged };
-      return true;
+      MetaType metaType = _context.Mapping.GetTable(key.EntityType).RowType;
+      if (_dataServices.IsCachedObject(metaType, entity))
+      {
+        entry = new ObjectStateEntry { EntityKey = key, Entity = entity, State = EntityState.Unchanged };
+        return true;
+      }
 
-      //TODO: What should cause this method to return false?
-      //stateInCurrentScope = null;
-      //return false;
+      entry = null;
+      return false;
     }
 
-    public bool TryGetObjectStateEntry(EntityKey key, out ObjectStateEntry stateInCurrentScope)
+    public bool TryGetObjectStateEntry(EntityKey key, out ObjectStateEntry entry)
     {
       ChangeSet changeSet = _context.GetChangeSet();
+     
       object entity = changeSet.Inserts.SingleOrDefault(x => key.Matches(x));
       if (entity != null)
       {
-        stateInCurrentScope = new ObjectStateEntry { EntityKey = key, Entity = entity, State = EntityState.Added };
+        entry = new ObjectStateEntry { EntityKey = key, Entity = entity, State = EntityState.Added };
         return true;
       }
+      
       entity = changeSet.Updates.SingleOrDefault(x => key.Matches(x));
       if (entity != null)
       {
-        stateInCurrentScope = new ObjectStateEntry { EntityKey = key, Entity = entity, State = EntityState.Modified };
+        entry = new ObjectStateEntry { EntityKey = key, Entity = entity, State = EntityState.Modified };
         return true;
       }
+      
       entity = changeSet.Deletes.SingleOrDefault(x => key.Matches(x));
       if (entity != null)
       {
-        stateInCurrentScope = new ObjectStateEntry { EntityKey = key, Entity = entity, State = EntityState.Deleted };
+        entry = new ObjectStateEntry { EntityKey = key, Entity = entity, State = EntityState.Deleted };
         return true;
       }
     
       MetaType metaType = _context.Mapping.GetTable(key.EntityType).RowType;
-      IDataServices services = CommonDataServicesWrapper.CreateDataServiceServicesWrapper(_context);
-      entity = services.GetCachedObject(metaType, new [] { key.PrimaryKeyValue });
-   
+      entity = _dataServices.GetCachedObject(metaType, key.PrimaryKeyValues);
       if (entity != null)
       {
-        stateInCurrentScope = new ObjectStateEntry { EntityKey = key, Entity = entity, State = EntityState.Unchanged };
+        entry = new ObjectStateEntry { EntityKey = key, Entity = entity, State = EntityState.Unchanged };
         return true;
       }
 
-      stateInCurrentScope = null;
+      entry = null;
       return false;
     }
   }
@@ -141,8 +144,7 @@ namespace Numero3.EntityFramework.Implementation
   public class EntityKey
   {
     private readonly Type _entityType;
-    private readonly Property _primaryKeyProperty;
-    private readonly object _primaryKeyValue;
+    private readonly List<KeyValuePair<Property, object>>_primaryKeyValuePairs;
 
     internal Type EntityType
     {
@@ -152,24 +154,23 @@ namespace Numero3.EntityFramework.Implementation
       }
     }
 
-    internal object PrimaryKeyValue
+    internal object[] PrimaryKeyValues
     {
       get
       {
-        return _primaryKeyValue;
+        return _primaryKeyValuePairs.Select(x => x.Value).ToArray();
       }
     }
 
-    internal EntityKey(Type entityType, Property primaryKeyProperty, object primaryKeyValue)
+    internal EntityKey(Type entityType, IEnumerable<KeyValuePair<Property, object>> primaryKeyValuePairs)
     {
       _entityType = entityType;
-      _primaryKeyProperty = primaryKeyProperty;
-      _primaryKeyValue = primaryKeyValue;
+      _primaryKeyValuePairs = new List<KeyValuePair<Property, object>>(primaryKeyValuePairs);
     }
 
     internal bool Matches(object entity)
     {
-      return entity.GetType() == _entityType && _primaryKeyProperty.GetValue(entity).Equals(_primaryKeyValue);
+      return entity.GetType() == _entityType && _primaryKeyValuePairs.All(pair => pair.Key.GetValue(entity).Equals(pair.Value));
     }
   }
 
@@ -186,19 +187,23 @@ namespace Numero3.EntityFramework.Implementation
     {
       Property[] result;
       if (primaryKeyMap.TryGetValue(type, out result))
+      {
         return result;
+      }
 
       PropertyInfo[] properties = type.GetProperties();
 
       List<Property> primaryKeys = new List<Property>();
       foreach (PropertyInfo property in properties)
       {
-        var attribs = property.GetCustomAttributes(typeof(System.Data.Linq.Mapping.ColumnAttribute), true);
+        var attribs = property.GetCustomAttributes(typeof(ColumnAttribute), true);
         if (attribs.Length > 0)
         {
-          System.Data.Linq.Mapping.ColumnAttribute column = attribs[0] as System.Data.Linq.Mapping.ColumnAttribute;
+          ColumnAttribute column = attribs[0] as ColumnAttribute;
           if (column.IsPrimaryKey)
+          {
             primaryKeys.Add(new Property(property));
+          }
         }
       }
 

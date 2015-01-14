@@ -35,7 +35,7 @@ namespace Numero3.EntityFramework.Demo.DatabaseContext
       }
     }
 
-		public UserManagementDbContext() : base("Server=localhost;Database=DbContextScopeDemo;Trusted_Connection=true;")
+		public UserManagementDbContext() : base("Server=localhost\\sqlserver2008;Database=DbContextScopeDemo;Trusted_Connection=true;")
 		{
 		}
   }
