@@ -1,3 +1,5 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/4xq5y34wxn9ygd10?svg=true)](https://ci.appveyor.com/project/kasperdaff/datacontextscope)
+
 DataContextScope
 ==============
 NOTE: THIS IS A FORK OF [DbContextScope](https://github.com/mehdime/DbContextScope) attempting to bring its goodness to Linq to SQL. Certain advanced features has not been ported yet.
