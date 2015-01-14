@@ -26,10 +26,10 @@ namespace Numero3.EntityFramework.Implementation
 
     public static int SaveChanges(this DataContext dataContext)
     {
+      ChangeSet changeSet = dataContext.GetChangeSet();
+      int numberOfAffectedEntities = changeSet.Inserts.Count + changeSet.Updates.Count + changeSet.Deletes.Count;
       dataContext.SubmitChanges();
-      //TODO: I suspect it is supposed to return number of affected rows,
-      // see if that is possible using Linq to SQL.
-      return 0;
+      return numberOfAffectedEntities;
     }
 
     public static ObjectStateManager GetObjectStateManager(this DataContext dataContext)

@@ -12,8 +12,6 @@ using System.Data.Linq;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.Remoting.Messaging;
-using System.Threading;
-using System.Threading.Tasks;
 using Numero3.EntityFramework.Interfaces;
 
 namespace Numero3.EntityFramework.Implementation
@@ -21,11 +19,11 @@ namespace Numero3.EntityFramework.Implementation
   public class DataContextScope : IDataContextScope
   {
     private bool _disposed;
-    private bool _readOnly;
+    private readonly bool _readOnly;
     private bool _completed;
-    private bool _nested;
-    private DataContextScope _parentScope;
-    private DataContextCollection _dataContexts;
+    private readonly bool _nested;
+    private readonly DataContextScope _parentScope;
+    private readonly DataContextCollection _dataContexts;
 
     public IDataContextCollection DataContexts { get { return _dataContexts; } }
 
@@ -129,7 +127,6 @@ namespace Numero3.EntityFramework.Implementation
 
     public void RefreshEntitiesInParentScope(IEnumerable entities)
     {
-      //TODO: THIS MIGHT NOT BE TRIVIAL TO IMPLEMENT IN LINQ TO SQL
       if (entities == null)
         return;
 
@@ -193,73 +190,6 @@ namespace Numero3.EntityFramework.Implementation
         }
       }
     }
-
-    //public void RefreshEntitiesInParentScope(IEnumerable entities)
-    //{
-    //  //TODO: THIS MIGHT NOT BE TRIVIAL TO IMPLEMENT IN LINQ TO SQL
-    //  if (entities == null)
-    //    return;
-
-    //  if (_parentScope == null)
-    //    return;
-
-    //  if (_nested) // The parent scope uses the same DataContext instances as we do - no need to refresh anything
-    //    return;
-
-    //  // OK, so we must loop through all the DataContext instances in the parent scope
-    //  // and see if their first-level cache (i.e. their ObjectStateManager) contains the provided entities. 
-    //  // If they do, we'll need to force a refresh from the database. 
-
-    //  // I'm sorry for this code but it's the only way to do this with the current version of Entity Framework 
-    //  // as far as I can see.
-
-    //  // What would be much nicer would be to have a way to merge all the modified / added / deleted
-    //  // entities from one DataContext instance to another. NHibernate has support for this sort of stuff 
-    //  // but EF still lags behind in this respect. But there is hope: https://entityframework.codeplex.com/workitem/864
-
-    //  // NOTE: DataContext implements the ObjectContext property of the IObjectContextAdapter interface explicitely.
-    //  // So we must cast the DataContext instances to IObjectContextAdapter in order to access their ObjectContext.
-    //  // This cast is completely safe.
-
-    //  foreach (IDataContextAdapter contextInCurrentScope in _dataContexts.InitializedDataContexts.Values)
-    //  {
-    //    var correspondingParentContext =
-    //        _parentScope._dataContexts.InitializedDataContexts.Values.SingleOrDefault(parentContext => parentContext.GetType() == contextInCurrentScope.GetType())
-    //         as IDataContextAdapter;
-
-    //    if (correspondingParentContext == null)
-    //      continue; // No DataContext of this type has been created in the parent scope yet. So no need to refresh anything for this DataContext type.
-
-    //    // Both our scope and the parent scope have an instance of the same DataContext type. 
-    //    // We can now look in the parent DataContext instance for entities that need to
-    //    // be refreshed.
-    //    foreach (var toRefresh in entities)
-    //    {
-    //      // First, we need to find what the EntityKey for this entity is. 
-    //      // We need this EntityKey in order to check if this entity has
-    //      // already been loaded in the parent DataContext's first-level cache (the ObjectStateManager).
-    //      ObjectStateEntry stateInCurrentScope;
-
-    //      if (contextInCurrentScope.DataContext.ObjectStateManager.TryGetObjectStateEntry(toRefresh, out stateInCurrentScope))
-    //      {
-    //        var key = stateInCurrentScope.EntityKey;
-
-    //        // Now we can see if that entity exists in the parent DataContext instance and refresh it.
-    //        ObjectStateEntry stateInParentScope;
-    //        if (correspondingParentContext.DataContext.ObjectStateManager.TryGetObjectStateEntry(key, out stateInParentScope))
-    //        {
-    //          // Only refresh the entity in the parent DataContext from the database if that entity hasn't already been
-    //          // modified in the parent. Otherwise, let the whatever concurency rules the application uses
-    //          // apply.
-    //          if (stateInParentScope.State == EntityState.Unchanged)
-    //          {
-    //            correspondingParentContext.ObjectContext.Refresh(RefreshMode.StoreWins, stateInParentScope.Entity);
-    //          }
-    //        }
-    //      }
-    //    }
-    //  }
-    //}
 
   //  public async Task RefreshEntitiesInParentScopeAsync(IEnumerable entities)
   //  {
@@ -478,7 +408,7 @@ Stack Trace:
          * 
          */
 
-    private static readonly string AmbientDataContextScopeKey = "AmbientDbcontext_" + Guid.NewGuid();
+    private static readonly string AmbientDataContextScopeKey = "AmbientDataContext_" + Guid.NewGuid();
 
     // Use a ConditionalWeakTable instead of a simple ConcurrentDictionary to store our DataContextScope instances 
     // in order to prevent leaking DataContextScope instances if someone doesn't dispose them properly.
@@ -487,7 +417,7 @@ Stack Trace:
     // disposing it, our ConcurrentDictionary would still have a reference to it, preventing
     // the GC from being able to collect it => leak. With a ConditionalWeakTable, we don't hold a reference
     // to the DataContextScope instances we store in there, allowing them to get GCed.
-    // The doc for ConditionalWeakTable isn't the best. This SO anser does a good job at explaining what 
+    // The doc for ConditionalWeakTable isn't the best. This SO answer does a good job at explaining what 
     // it does: http://stackoverflow.com/a/18613811
     private static readonly ConditionalWeakTable<InstanceIdentifier, DataContextScope> DataContextScopeInstances = new ConditionalWeakTable<InstanceIdentifier, DataContextScope>();
 

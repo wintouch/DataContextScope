@@ -11,8 +11,6 @@ using System.Data;
 using System.Data.Common;
 using System.Data.Linq;
 using System.Runtime.ExceptionServices;
-using System.Threading;
-using System.Threading.Tasks;
 using Numero3.EntityFramework.Interfaces;
 
 namespace Numero3.EntityFramework.Implementation
@@ -31,13 +29,13 @@ namespace Numero3.EntityFramework.Implementation
     /// </summary>
     public class DataContextCollection : IDataContextCollection
     {
-        private Dictionary<Type, DataContext> _initializedDataContexts;
-        private Dictionary<DataContext, DbTransaction> _transactions; 
+        private readonly Dictionary<Type, DataContext> _initializedDataContexts;
+        private readonly Dictionary<DataContext, DbTransaction> _transactions; 
         private IsolationLevel? _isolationLevel;
         private readonly IDataContextFactory _dataContextFactory;
         private bool _disposed;
         private bool _completed;
-        private bool _readOnly;
+        private readonly bool _readOnly;
 
         internal Dictionary<Type, DataContext> InitializedDataContexts { get { return _initializedDataContexts; } }
 
@@ -79,7 +77,6 @@ namespace Numero3.EntityFramework.Implementation
 
                 if (_isolationLevel.HasValue)
                 {
-                 
                     var tran = dataContext.BeginTransaction(_isolationLevel.Value);
                     _transactions.Add(dataContext, tran);
                 }
