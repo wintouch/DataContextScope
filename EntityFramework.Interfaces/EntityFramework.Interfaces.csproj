@@ -43,17 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataContextScopeOption.cs" />
-    <Compile Include="IAmbientDataContextLocator.cs" />
-    <Compile Include="IDataContextCollection.cs" />
-    <Compile Include="IDataContextFactory.cs" />
-    <Compile Include="IDataContextReadOnlyScope.cs" />
-    <Compile Include="IDataContextScope.cs" />
-    <Compile Include="IDataContextScopeFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
