@@ -1,6 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+/* 
+ * Copyright (C) 2015 Kasper Frank
+ * http://www.geturi.com
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license.  See the LICENSE file for details.
+ */
 using System.Data.Common;
 using System.Data.Linq;
 using System.Data.Linq.Mapping;
@@ -10,7 +17,7 @@ using System.Reflection;
 
 namespace Numero3.EntityFramework.Implementation
 {
-  public static class DataContextExtensions
+  internal static class DataContextExtensions
   {
     public static DbTransaction BeginTransaction(this DataContext dataContext, IsolationLevel level)
     {
@@ -32,11 +39,11 @@ namespace Numero3.EntityFramework.Implementation
       return numberOfAffectedEntities;
     }
 
-    public static ObjectStateManager GetObjectStateManager(this DataContext dataContext)
+    internal static ObjectStateManager GetObjectStateManager(this DataContext dataContext)
     {
       return new ObjectStateManager(dataContext);
     }
-      
+
     internal static object GetNativeCommonDataServices(this DataContext context)
     {
       FieldInfo servicesField = typeof(DataContext).GetField("services", BindingFlags.Instance | BindingFlags.NonPublic);
@@ -45,12 +52,12 @@ namespace Numero3.EntityFramework.Implementation
     }
   }
 
-  public class ObjectStateManager
+  internal class ObjectStateManager
   {
     private readonly DataContext _context;
     private readonly IDataServices _dataServices;
 
-    internal ObjectStateManager(DataContext context)
+    public ObjectStateManager(DataContext context)
     {
       _context = context;
       _dataServices = CommonDataServicesWrapper.CreateDataServiceServicesWrapper(context);
@@ -62,7 +69,7 @@ namespace Numero3.EntityFramework.Implementation
       var primaryKeys = DataContextHelper.GetPrimaryKeys(entityType);
       EntityKey key = new EntityKey(entityType, primaryKeys.Select(x => new KeyValuePair<Property, object>(x, x.GetValue(entity))));
       ChangeSet changeSet = _context.GetChangeSet();
-      
+
       if (changeSet.Inserts.Any(x => x == entity))
       {
         entry = new ObjectStateEntry { EntityKey = key, Entity = entity, State = EntityState.Added };
@@ -95,28 +102,28 @@ namespace Numero3.EntityFramework.Implementation
     public bool TryGetObjectStateEntry(EntityKey key, out ObjectStateEntry entry)
     {
       ChangeSet changeSet = _context.GetChangeSet();
-     
+
       object entity = changeSet.Inserts.SingleOrDefault(x => key.Matches(x));
       if (entity != null)
       {
         entry = new ObjectStateEntry { EntityKey = key, Entity = entity, State = EntityState.Added };
         return true;
       }
-      
+
       entity = changeSet.Updates.SingleOrDefault(x => key.Matches(x));
       if (entity != null)
       {
         entry = new ObjectStateEntry { EntityKey = key, Entity = entity, State = EntityState.Modified };
         return true;
       }
-      
+
       entity = changeSet.Deletes.SingleOrDefault(x => key.Matches(x));
       if (entity != null)
       {
         entry = new ObjectStateEntry { EntityKey = key, Entity = entity, State = EntityState.Deleted };
         return true;
       }
-    
+
       MetaType metaType = _context.Mapping.GetTable(key.EntityType).RowType;
       entity = _dataServices.GetCachedObject(metaType, key.PrimaryKeyValues);
       if (entity != null)
@@ -130,9 +137,9 @@ namespace Numero3.EntityFramework.Implementation
     }
   }
 
-  public enum EntityState { Added, Deleted, Detached, Modified, Unchanged };
+  internal enum EntityState { Added, Deleted, Detached, Modified, Unchanged };
 
-  public class ObjectStateEntry
+  internal class ObjectStateEntry
   {
     public object Entity { get; set; }
 
@@ -141,10 +148,10 @@ namespace Numero3.EntityFramework.Implementation
     public EntityState State { get; set; }
   }
 
-  public class EntityKey
+  internal class EntityKey
   {
     private readonly Type _entityType;
-    private readonly List<KeyValuePair<Property, object>>_primaryKeyValuePairs;
+    private readonly List<KeyValuePair<Property, object>> _primaryKeyValuePairs;
 
     internal Type EntityType
     {
@@ -172,11 +179,6 @@ namespace Numero3.EntityFramework.Implementation
     {
       return entity.GetType() == _entityType && _primaryKeyValuePairs.All(pair => pair.Key.GetValue(entity).Equals(pair.Value));
     }
-  }
-
-  public interface IDataContextAdapter
-  {
-    DataContext DataContext { get; }
   }
 
   internal static class DataContextHelper
@@ -244,12 +246,12 @@ namespace Numero3.EntityFramework.Implementation
     }
   }
 
-  public delegate object LateBoundMethod(object target, object[] arguments);
+  internal delegate object LateBoundMethod(object target, object[] arguments);
   delegate void LateBoundVoidMethod(object target, object[] arguments);
 
   public delegate object LateBoundPropertyAccess(object target);//, object[] arguments);
 
-  public static class DelegateFactory
+  internal static class DelegateFactory
   {
     public static LateBoundMethod Create(MethodInfo method)
     {
@@ -313,7 +315,7 @@ namespace Numero3.EntityFramework.Implementation
   }
 
   //TODO: This interface has been expanded significantly from .NET 3.5 to 4.5 - consider exposing them all for completeness
-  public interface IDataServices
+  internal interface IDataServices
   {
     // Methods
     object GetCachedObject(Expression query);
@@ -330,96 +332,95 @@ namespace Numero3.EntityFramework.Implementation
     MetaModel Model { get; }
   }
 
-   class CommonDataServicesWrapper : IDataServices
+  internal class CommonDataServicesWrapper : IDataServices
+  {
+    private readonly object commonDataServices;
+
+    private static readonly Type ServicesType = typeof(DataContext).Assembly.GetType("System.Data.Linq.CommonDataServices");
+    private static readonly Dictionary<string, LateBoundMethod> Methods = new Dictionary<string, LateBoundMethod>();
+    private static readonly Dictionary<string, LateBoundPropertyAccess> Properties = new Dictionary<string, LateBoundPropertyAccess>();
+
+    static CommonDataServicesWrapper()
     {
-      private readonly object commonDataServices;
+      Methods.Add("GetCachedObject", DelegateFactory.Create(ServicesType.GetMethod("GetCachedObject")));
+      Methods.Add("GetCachedObject2", DelegateFactory.Create(ServicesType.GetMethod("GetCachedObject", BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { typeof(MetaType), typeof(object[]) }, null)));
+      Methods.Add("GetDeferredSourceFactory", DelegateFactory.Create(ServicesType.GetMethod("GetDeferredSourceFactory")));
+      Methods.Add("InsertLookupCachedObject", DelegateFactory.Create(ServicesType.GetMethod("InsertLookupCachedObject")));
+      Methods.Add("IsCachedObject", DelegateFactory.Create(ServicesType.GetMethod("IsCachedObject")));
+      Methods.Add("OnEntityMaterialized", DelegateFactory.Create(ServicesType.GetMethod("OnEntityMaterialized")));
+      Methods.Add("ResetServices", DelegateFactory.Create(ServicesType.GetMethod("ResetServices", BindingFlags.NonPublic | BindingFlags.Instance)));
 
-      private static readonly Type ServicesType = typeof(DataContext).Assembly.GetType("System.Data.Linq.CommonDataServices");
-      private static readonly Dictionary<string, LateBoundMethod> Methods = new Dictionary<string, LateBoundMethod>();
-      private static readonly Dictionary<string, LateBoundPropertyAccess> Properties = new Dictionary<string, LateBoundPropertyAccess>();
+      Properties.Add("Context", DelegateFactory.Create(ServicesType.GetProperty("Context")));
+      Properties.Add("Model", DelegateFactory.Create(ServicesType.GetProperty("Model")));
+    }
 
-      static CommonDataServicesWrapper()
-      {
-        Methods.Add("GetCachedObject", DelegateFactory.Create(ServicesType.GetMethod("GetCachedObject")));
-        Methods.Add("GetCachedObject2", DelegateFactory.Create(ServicesType.GetMethod("GetCachedObject", BindingFlags.NonPublic | BindingFlags.Instance, null, new [] { typeof(MetaType), typeof(object[])}, null)));
-        Methods.Add("GetDeferredSourceFactory", DelegateFactory.Create(ServicesType.GetMethod("GetDeferredSourceFactory")));
-        Methods.Add("InsertLookupCachedObject", DelegateFactory.Create(ServicesType.GetMethod("InsertLookupCachedObject")));
-        Methods.Add("IsCachedObject", DelegateFactory.Create(ServicesType.GetMethod("IsCachedObject")));
-        Methods.Add("OnEntityMaterialized", DelegateFactory.Create(ServicesType.GetMethod("OnEntityMaterialized")));
-        Methods.Add("ResetServices", DelegateFactory.Create(ServicesType.GetMethod("ResetServices", BindingFlags.NonPublic | BindingFlags.Instance)));
+    public CommonDataServicesWrapper(object commonDataServices)
+    {
+      if (commonDataServices == null)
+        throw new ArgumentNullException("commonDataServices");
 
-        Properties.Add("Context", DelegateFactory.Create(ServicesType.GetProperty("Context")));
-        Properties.Add("Model", DelegateFactory.Create(ServicesType.GetProperty("Model")));
-      }
+      this.commonDataServices = commonDataServices;
 
-      public CommonDataServicesWrapper(object commonDataServices)
-      {
-        if (commonDataServices == null)
-          throw new ArgumentNullException("commonDataServices");
-
-        this.commonDataServices = commonDataServices;
-
-        Type servicesType = commonDataServices.GetType();
-        if (servicesType != ServicesType)
-          throw new ArgumentException("This is a wrapper for System.Data.Linq.CommonDataServices");
-      }
+      Type servicesType = commonDataServices.GetType();
+      if (servicesType != ServicesType)
+        throw new ArgumentException("This is a wrapper for System.Data.Linq.CommonDataServices");
+    }
 
     internal static IDataServices CreateDataServiceServicesWrapper(DataContext context)
     {
       return new CommonDataServicesWrapper(context.GetNativeCommonDataServices());
     }
 
-      public object GetCachedObject(Expression query)
-      {
-        return Methods["GetCachedObject"].Invoke(commonDataServices, new object[] { query });
-      }
+    public object GetCachedObject(Expression query)
+    {
+      return Methods["GetCachedObject"].Invoke(commonDataServices, new object[] { query });
+    }
 
-     public object GetCachedObject(MetaType type, object[] keyValues)
-     {
-       return Methods["GetCachedObject2"].Invoke(commonDataServices, new object[] { type, keyValues });
-     }
+    public object GetCachedObject(MetaType type, object[] keyValues)
+    {
+      return Methods["GetCachedObject2"].Invoke(commonDataServices, new object[] { type, keyValues });
+    }
 
-     public object GetCachedObjectLike(MetaType type, object instance)
-      {
-        return Methods["GetCachedObjectLike"].Invoke(commonDataServices, new object[] { type, instance });
-      }
+    public object GetCachedObjectLike(MetaType type, object instance)
+    {
+      return Methods["GetCachedObjectLike"].Invoke(commonDataServices, new object[] { type, instance });
+    }
 
-      public object GetDeferredSourceFactory(MetaDataMember member)
-      {
-        return Methods["GetDeferredSourceFactory"].Invoke(commonDataServices, new object[] { member });
-      }
+    public object GetDeferredSourceFactory(MetaDataMember member)
+    {
+      return Methods["GetDeferredSourceFactory"].Invoke(commonDataServices, new object[] { member });
+    }
 
-      public object InsertLookupCachedObject(MetaType type, object instance)
-      {
-        return Methods["InsertLookupCachedObject"].Invoke(commonDataServices, new [] { type, instance });
-      }
+    public object InsertLookupCachedObject(MetaType type, object instance)
+    {
+      return Methods["InsertLookupCachedObject"].Invoke(commonDataServices, new[] { type, instance });
+    }
 
-      public bool IsCachedObject(MetaType type, object instance)
-      {
-        return (bool)Methods["IsCachedObject"].Invoke(commonDataServices, new [] { type, instance });
-      }
+    public bool IsCachedObject(MetaType type, object instance)
+    {
+      return (bool)Methods["IsCachedObject"].Invoke(commonDataServices, new[] { type, instance });
+    }
 
-      public void OnEntityMaterialized(MetaType type, object instance)
-      {
-        Methods["OnEntityMaterialized"].Invoke(commonDataServices, new [] { type, instance });
-      }
+    public void OnEntityMaterialized(MetaType type, object instance)
+    {
+      Methods["OnEntityMaterialized"].Invoke(commonDataServices, new[] { type, instance });
+    }
 
-      public void ResetServices()
-      {
-        Methods["ResetServices"].Invoke(commonDataServices, null);
-      }
+    public void ResetServices()
+    {
+      Methods["ResetServices"].Invoke(commonDataServices, null);
+    }
 
-      public DataContext Context
-      {
-        get { return (DataContext)Properties["Context"].Invoke(commonDataServices); }
-      }
+    public DataContext Context
+    {
+      get { return (DataContext)Properties["Context"].Invoke(commonDataServices); }
+    }
 
-      public MetaModel Model
-      {
-        get { return (MetaModel)Properties["Model"].Invoke(commonDataServices); }
-      }
-     
+    public MetaModel Model
+    {
+      get { return (MetaModel)Properties["Model"].Invoke(commonDataServices); }
     }
   }
+}
   
 

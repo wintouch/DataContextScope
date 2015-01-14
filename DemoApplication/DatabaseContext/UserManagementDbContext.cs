@@ -2,11 +2,10 @@
 using System.Data.Linq;
 using System.Linq;
 using Numero3.EntityFramework.Demo.DomainModel;
-using Numero3.EntityFramework.Implementation;
 
 namespace Numero3.EntityFramework.Demo.DatabaseContext
 {
-  public class UserManagementDbContext : DataContext, IDataContextAdapter
+  public class UserManagementDbContext : DataContext
 	{
     static UserManagementDbContext()
 	  {
@@ -35,7 +34,7 @@ namespace Numero3.EntityFramework.Demo.DatabaseContext
       }
     }
 
-		public UserManagementDbContext() : base("Server=localhost\\sqlserver2008;Database=DbContextScopeDemo;Trusted_Connection=true;")
+		public UserManagementDbContext() : base("Server=localhost;Database=DbContextScopeDemo;Trusted_Connection=true;")
 		{
 		}
   }

@@ -151,11 +151,10 @@ namespace Numero3.EntityFramework.Implementation
       // So we must cast the DataContext instances to IObjectContextAdapter in order to access their ObjectContext.
       // This cast is completely safe.
 
-      foreach (IDataContextAdapter contextInCurrentScope in _dataContexts.InitializedDataContexts.Values)
+      foreach (DataContext contextInCurrentScope in _dataContexts.InitializedDataContexts.Values)
       {
         var correspondingParentContext =
-            _parentScope._dataContexts.InitializedDataContexts.Values.SingleOrDefault(parentContext => parentContext.GetType() == contextInCurrentScope.GetType())
-             as IDataContextAdapter;
+            _parentScope._dataContexts.InitializedDataContexts.Values.SingleOrDefault(parentContext => parentContext.GetType() == contextInCurrentScope.GetType());
 
         if (correspondingParentContext == null)
           continue; // No DataContext of this type has been created in the parent scope yet. So no need to refresh anything for this DataContext type.
@@ -170,20 +169,20 @@ namespace Numero3.EntityFramework.Implementation
           // already been loaded in the parent DataContext's first-level cache (the ObjectStateManager).
           ObjectStateEntry stateInCurrentScope;
 
-          if (contextInCurrentScope.DataContext.GetObjectStateManager().TryGetObjectStateEntry(toRefresh, out stateInCurrentScope))
+          if (contextInCurrentScope.GetObjectStateManager().TryGetObjectStateEntry(toRefresh, out stateInCurrentScope))
           {
             var key = stateInCurrentScope.EntityKey;
 
             // Now we can see if that entity exists in the parent DataContext instance and refresh it.
             ObjectStateEntry stateInParentScope;
-            if (correspondingParentContext.DataContext.GetObjectStateManager().TryGetObjectStateEntry(key, out stateInParentScope))
+            if (correspondingParentContext.GetObjectStateManager().TryGetObjectStateEntry(key, out stateInParentScope))
             {
               // Only refresh the entity in the parent DataContext from the database if that entity hasn't already been
               // modified in the parent. Otherwise, let the whatever concurency rules the application uses
               // apply.
               if (stateInParentScope.State == EntityState.Unchanged)
               {
-                correspondingParentContext.DataContext.Refresh(RefreshMode.OverwriteCurrentValues, stateInParentScope.Entity);
+                correspondingParentContext.Refresh(RefreshMode.OverwriteCurrentValues, stateInParentScope.Entity);
               }
             }
           }
