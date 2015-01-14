@@ -10,7 +10,7 @@ using System.Collections;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Numero3.EntityFramework.Interfaces
+namespace Geturi.Data.Linq
 {
   /// <summary>
   /// Creates and manages the DataContext instances used by this code block. 

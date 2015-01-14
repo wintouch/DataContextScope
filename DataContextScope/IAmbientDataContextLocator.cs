@@ -7,7 +7,7 @@
  */
 using System.Data.Linq;
 
-namespace Numero3.EntityFramework.Interfaces
+namespace Geturi.Data.Linq
 {
     /// <summary>
     /// Convenience methods to retrieve ambient DataContext instances. 

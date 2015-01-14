@@ -8,7 +8,7 @@
 using System;
 using System.Data.Linq;
 
-namespace Numero3.EntityFramework.Interfaces
+namespace Geturi.Data.Linq
 {
     /// <summary>
     /// Maintains a list of lazily-created DataContext instances.

@@ -15,7 +15,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Numero3.EntityFramework.Implementation
+namespace Geturi.Data.Linq
 {
   internal static class DataContextExtensions
   {

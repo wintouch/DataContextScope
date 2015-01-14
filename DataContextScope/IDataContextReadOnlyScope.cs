@@ -7,7 +7,7 @@
  */
 using System;
 
-namespace Numero3.EntityFramework.Interfaces
+namespace Geturi.Data.Linq
 {
     /// <summary>
     /// A read-only DataContextScope. Refer to the comments for IDataContextScope

@@ -7,7 +7,7 @@
  */
 using System;
 
-namespace Numero3.EntityFramework.Implementation
+namespace Geturi.Data.Linq
 {
     public class AmbientContextSuppressor : IDisposable
     {

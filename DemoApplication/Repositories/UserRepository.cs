@@ -2,7 +2,7 @@
 using System.Linq;
 using Numero3.EntityFramework.Demo.DatabaseContext;
 using Numero3.EntityFramework.Demo.DomainModel;
-using Numero3.EntityFramework.Interfaces;
+using Geturi.Data.Linq;
 
 namespace Numero3.EntityFramework.Demo.Repositories
 {

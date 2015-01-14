@@ -7,7 +7,7 @@
  */
 using System.Data.Linq;
 
-namespace Numero3.EntityFramework.Interfaces
+namespace Geturi.Data.Linq
 {
     /// <summary>
     /// Factory for DataContext-derived classes that don't expose 

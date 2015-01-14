@@ -7,9 +7,9 @@
  */
 using System;
 using System.Data;
-using Numero3.EntityFramework.Interfaces;
+using Geturi.Data.Linq;
 
-namespace Numero3.EntityFramework.Implementation
+namespace Geturi.Data.Linq
 {
     public class DataContextScopeFactory : IDataContextScopeFactory
     {

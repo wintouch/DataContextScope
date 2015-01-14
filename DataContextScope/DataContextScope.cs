@@ -12,9 +12,9 @@ using System.Data.Linq;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.Remoting.Messaging;
-using Numero3.EntityFramework.Interfaces;
+using Geturi.Data.Linq;
 
-namespace Numero3.EntityFramework.Implementation
+namespace Geturi.Data.Linq
 {
   public class DataContextScope : IDataContextScope
   {

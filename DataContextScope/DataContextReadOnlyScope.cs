@@ -6,9 +6,9 @@
  * of the MIT license.  See the LICENSE file for details.
  */
 using System.Data;
-using Numero3.EntityFramework.Interfaces;
+using Geturi.Data.Linq;
 
-namespace Numero3.EntityFramework.Implementation
+namespace Geturi.Data.Linq
 {
     public class DataContextReadOnlyScope : IDataContextReadOnlyScope
     {

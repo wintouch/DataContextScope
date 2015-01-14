@@ -11,9 +11,9 @@ using System.Data;
 using System.Data.Common;
 using System.Data.Linq;
 using System.Runtime.ExceptionServices;
-using Numero3.EntityFramework.Interfaces;
+using Geturi.Data.Linq;
 
-namespace Numero3.EntityFramework.Implementation
+namespace Geturi.Data.Linq
 {
     /// <summary>
     /// As its name suggests, DataContextCollection maintains a collection of DataContext instances.
