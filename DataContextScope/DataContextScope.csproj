@@ -43,6 +43,7 @@
     <Compile Include="AmbientContextSuppressor.cs" />
     <Compile Include="AmbientDataContextLocator.cs" />
     <Compile Include="DataContextCollection.cs" />
+    <Compile Include="DataContextFactory.cs" />
     <Compile Include="DataContextReadOnlyScope.cs" />
     <Compile Include="DataContextScope.cs" />
     <Compile Include="DataContextScopeFactory.cs" />
