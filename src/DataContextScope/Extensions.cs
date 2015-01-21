@@ -15,5 +15,10 @@ namespace Geturi.Data.Linq
     {
       return dataContextScope.DataContexts.Get<TDataContext>();
     }
+
+    public static TDataContext Get<TDataContext>(this IDataContextReadOnlyScope dataContextScope) where TDataContext : DataContext
+    {
+      return dataContextScope.DataContexts.Get<TDataContext>();
+    }
   }
 }
