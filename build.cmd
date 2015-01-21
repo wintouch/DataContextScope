@@ -1,0 +1,1 @@
+Tools\Cake\Cake.exe build.csx -verbosity=verbose -target=Build
