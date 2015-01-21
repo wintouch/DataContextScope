@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-/* 
+﻿/* 
  * Copyright (C) 2015 Kasper Frank
  * http://www.geturi.com
  *
  * This software may be modified and distributed under the terms
  * of the MIT license.  See the LICENSE file for details.
  */
+using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Data.Common;
 using System.Data.Linq;
 using System.Data.Linq.Mapping;

@@ -106,7 +106,7 @@ namespace Numero3.EntityFramework.Demo
 
 				using (var parentScope = dbContextScopeFactory.Create())
 				{
-					var parentDbContext = parentScope.DataContexts.Get<UserManagementDbContext>();
+					var parentDbContext = parentScope.Get<UserManagementDbContext>();
 
 					// Load John in the parent DbContext
 					var john = parentDbContext.Users.Find(johnSpec.Id);

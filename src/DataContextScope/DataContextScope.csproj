@@ -46,6 +46,7 @@
     <Compile Include="DataContextScope.cs" />
     <Compile Include="DataContextScopeFactory.cs" />
     <Compile Include="DataContextScopeOption.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="IAmbientDataContextLocator.cs" />
     <Compile Include="IDataContextCollection.cs" />
     <Compile Include="IDataContextFactory.cs" />

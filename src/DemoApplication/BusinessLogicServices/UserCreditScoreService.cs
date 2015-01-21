@@ -26,7 +26,7 @@ namespace Numero3.EntityFramework.Demo.BusinessLogicServices
 			using (var dbContextScope = _dbContextScopeFactory.Create())
 			{
 				//-- Get all users
-				var dbContext = dbContextScope.DataContexts.Get<UserManagementDbContext>();
+				var dbContext = dbContextScope.Get<UserManagementDbContext>();
 				var userIds = dbContext.Users.Select(u => u.Id).ToList();
 
 				Console.WriteLine("Found {0} users in the database. Will calculate and store their credit scores in parallel.", userIds.Count);
@@ -54,7 +54,7 @@ namespace Numero3.EntityFramework.Demo.BusinessLogicServices
 		{
 			using (var dbContextScope = _dbContextScopeFactory.Create())
 			{
-				var dbContext = dbContextScope.DataContexts.Get<UserManagementDbContext>();
+				var dbContext = dbContextScope.Get<UserManagementDbContext>();
 				var user = dbContext.Users.Find(userId);
 				if (user == null)
 					throw new ArgumentException(String.Format("Invalid userId provided: {0}. Couldn't find a User with this ID.", userId));
