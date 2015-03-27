@@ -8,7 +8,7 @@
 using System;
 using System.Data.Linq;
 
-namespace Geturi.Data.Linq
+namespace Wintouch.Data.Linq
 {
     /// <summary>
     /// Maintains a list of lazily-created DataContext instances.

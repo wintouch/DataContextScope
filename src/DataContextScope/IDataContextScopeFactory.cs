@@ -8,7 +8,7 @@
 using System;
 using System.Data;
 
-namespace Geturi.Data.Linq
+namespace Wintouch.Data.Linq
 {
     /// <summary>
     /// Convenience methods to create a new ambient DataContextScope. This is the prefered method

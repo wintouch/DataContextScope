@@ -1,13 +1,13 @@
 ﻿/* 
  * Copyright (C) 2015 Kasper Frank
- * http://www.geturi.com
+ * http://www.Wintouch.com
  *
  * This software may be modified and distributed under the terms
  * of the MIT license.  See the LICENSE file for details.
  */
 using System.Data.Linq;
 
-namespace Geturi.Data.Linq
+namespace Wintouch.Data.Linq
 {
   public static class Extensions
   {

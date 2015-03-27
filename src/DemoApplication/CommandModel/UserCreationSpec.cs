@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Numero3.EntityFramework.Demo.CommandModel
+namespace Wintouch.EntityFramework.Demo.CommandModel
 {
 	/// <summary>
 	/// Specifications of the CreateUser command. Defines the properties of a new user.

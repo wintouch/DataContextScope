@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Data.Linq;
 using System.Linq;
-using Numero3.EntityFramework.Demo.DomainModel;
+using Wintouch.EntityFramework.Demo.DomainModel;
 
-namespace Numero3.EntityFramework.Demo.DatabaseContext
+namespace Wintouch.EntityFramework.Demo.DatabaseContext
 {
   public class UserManagementDbContext : DataContext
 	{

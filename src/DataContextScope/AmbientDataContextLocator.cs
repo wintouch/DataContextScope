@@ -6,9 +6,9 @@
  * of the MIT license.  See the LICENSE file for details.
  */
 using System.Data.Linq;
-using Geturi.Data.Linq;
+using Wintouch.Data.Linq;
 
-namespace Geturi.Data.Linq
+namespace Wintouch.Data.Linq
 {
     public class AmbientDataContextLocator : IAmbientDataContextLocator
     {

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq;
-using Numero3.EntityFramework.Demo.DatabaseContext;
-using Numero3.EntityFramework.Demo.DomainModel;
-using Geturi.Data.Linq;
+using Wintouch.EntityFramework.Demo.DatabaseContext;
+using Wintouch.EntityFramework.Demo.DomainModel;
+using Wintouch.Data.Linq;
 
-namespace Numero3.EntityFramework.Demo.Repositories
+namespace Wintouch.EntityFramework.Demo.Repositories
 {
 	/*
 	 * An example "repository" relying on an ambient DbContext instance.

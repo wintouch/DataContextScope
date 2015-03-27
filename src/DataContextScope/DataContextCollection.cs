@@ -11,9 +11,9 @@ using System.Data;
 using System.Data.Common;
 using System.Data.Linq;
 using System.Runtime.ExceptionServices;
-using Geturi.Data.Linq;
+using Wintouch.Data.Linq;
 
-namespace Geturi.Data.Linq
+namespace Wintouch.Data.Linq
 {
     /// <summary>
     /// As its name suggests, DataContextCollection maintains a collection of DataContext instances.

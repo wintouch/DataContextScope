@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data.Linq.Mapping;
 
-namespace Numero3.EntityFramework.Demo.DomainModel
+namespace Wintouch.EntityFramework.Demo.DomainModel
 {
 	// Anemic model to keep this demo application simple.
   [Table]

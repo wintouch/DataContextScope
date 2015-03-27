@@ -7,8 +7,8 @@
     <ProjectGuid>{3EBE8938-29FD-418C-9995-640F9ABEC858}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Geturi.Data.Linq</RootNamespace>
-    <AssemblyName>DataContextScope</AssemblyName>
+    <RootNamespace>Wintouch.Data.Linq</RootNamespace>
+    <AssemblyName>Wintouch.Linq.DataContextScope</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

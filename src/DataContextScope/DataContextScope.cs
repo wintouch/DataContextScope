@@ -12,9 +12,9 @@ using System.Data.Linq;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.Remoting.Messaging;
-using Geturi.Data.Linq;
+using Wintouch.Data.Linq;
 
-namespace Geturi.Data.Linq
+namespace Wintouch.Data.Linq
 {
   public class DataContextScope : IDataContextScope
   {

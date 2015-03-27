@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
-using Numero3.EntityFramework.Demo.DatabaseContext;
-using Numero3.EntityFramework.Demo.DomainModel;
-using Numero3.EntityFramework.Demo.Repositories;
-using Geturi.Data.Linq;
+using Wintouch.EntityFramework.Demo.DatabaseContext;
+using Wintouch.EntityFramework.Demo.DomainModel;
+using Wintouch.EntityFramework.Demo.Repositories;
+using Wintouch.Data.Linq;
 
-namespace Numero3.EntityFramework.Demo.BusinessLogicServices
+namespace Wintouch.EntityFramework.Demo.BusinessLogicServices
 {
 	/*
 	 * Example business logic service implementing query functionalities (i.e. read actions).

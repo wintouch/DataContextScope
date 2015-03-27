@@ -2,10 +2,10 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Numero3.EntityFramework.Demo.DatabaseContext;
-using Geturi.Data.Linq;
+using Wintouch.EntityFramework.Demo.DatabaseContext;
+using Wintouch.Data.Linq;
 
-namespace Numero3.EntityFramework.Demo.BusinessLogicServices
+namespace Wintouch.EntityFramework.Demo.BusinessLogicServices
 {
 	public class UserCreditScoreService
 	{

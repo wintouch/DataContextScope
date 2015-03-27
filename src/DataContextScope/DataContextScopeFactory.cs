@@ -8,13 +8,18 @@
 using System;
 using System.Data;
 using System.Data.Linq;
-using Geturi.Data.Linq;
+using Wintouch.Data.Linq;
 
-namespace Geturi.Data.Linq
+namespace Wintouch.Data.Linq
 {
   public class DataContextScopeFactory : IDataContextScopeFactory
   {
     private readonly IDataContextFactory _dataContextFactory;
+
+    public DataContextScopeFactory()
+    {
+        _dataContextFactory = null;
+    }
 
     public DataContextScopeFactory(IDataContextFactory dataContextFactory = null)
     {

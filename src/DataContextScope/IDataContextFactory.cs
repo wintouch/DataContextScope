@@ -7,7 +7,7 @@
  */
 using System.Data.Linq;
 
-namespace Geturi.Data.Linq
+namespace Wintouch.Data.Linq
 {
     /// <summary>
     /// Factory for DataContext-derived classes that don't expose 

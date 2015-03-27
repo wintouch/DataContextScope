@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Linq;
-using Numero3.EntityFramework.Demo.BusinessLogicServices;
-using Numero3.EntityFramework.Demo.CommandModel;
-using Numero3.EntityFramework.Demo.DatabaseContext;
-using Numero3.EntityFramework.Demo.Repositories;
-using Geturi.Data.Linq;
+using Wintouch.EntityFramework.Demo.BusinessLogicServices;
+using Wintouch.EntityFramework.Demo.CommandModel;
+using Wintouch.EntityFramework.Demo.DatabaseContext;
+using Wintouch.EntityFramework.Demo.Repositories;
+using Wintouch.Data.Linq;
 
-namespace Numero3.EntityFramework.Demo
+namespace Wintouch.EntityFramework.Demo
 {
 	class Program
 	{

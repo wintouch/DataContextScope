@@ -1,10 +1,10 @@
 ﻿using System;
-using Numero3.EntityFramework.Demo.CommandModel;
-using Numero3.EntityFramework.Demo.DomainModel;
-using Numero3.EntityFramework.Demo.Repositories;
-using Geturi.Data.Linq;
+using Wintouch.EntityFramework.Demo.CommandModel;
+using Wintouch.EntityFramework.Demo.DomainModel;
+using Wintouch.EntityFramework.Demo.Repositories;
+using Wintouch.Data.Linq;
 
-namespace Numero3.EntityFramework.Demo.BusinessLogicServices
+namespace Wintouch.EntityFramework.Demo.BusinessLogicServices
 {
 	/*
 	 * Example business logic service implementing command functionalities (i.e. create / update actions).

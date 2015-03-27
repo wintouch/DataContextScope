@@ -7,7 +7,7 @@
  */
 using System;
 
-namespace Geturi.Data.Linq
+namespace Wintouch.Data.Linq
 {
     /// <summary>
     /// A read-only DataContextScope. Refer to the comments for IDataContextScope

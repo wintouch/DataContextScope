@@ -7,7 +7,7 @@
  */
 using System.Data.Linq;
 
-namespace Geturi.Data.Linq
+namespace Wintouch.Data.Linq
 {
     /// <summary>
     /// Convenience methods to retrieve ambient DataContext instances. 

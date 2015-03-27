@@ -7,7 +7,7 @@
  */
 using System;
 
-namespace Geturi.Data.Linq
+namespace Wintouch.Data.Linq
 {
     public class AmbientContextSuppressor : IDisposable
     {

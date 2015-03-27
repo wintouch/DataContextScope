@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Numero3.EntityFramework.Demo.DomainModel;
+using Wintouch.EntityFramework.Demo.DomainModel;
 
-namespace Numero3.EntityFramework.Demo.Repositories
+namespace Wintouch.EntityFramework.Demo.Repositories
 {
 	public interface IUserRepository 
 	{
