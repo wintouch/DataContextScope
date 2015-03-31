@@ -19,5 +19,10 @@ namespace Wintouch.Data.Linq
         /// Get or create a DataContext instance of the specified type. 
         /// </summary>
 		TDataContext Get<TDataContext>() where TDataContext : DataContext;
+
+        /// <summary>
+        /// Get or create a DataContext instance of the specified type for a specified connection string. 
+        /// </summary>
+        TDataContext Get<TDataContext>(string connectionString) where TDataContext : DataContext;
     }
 }

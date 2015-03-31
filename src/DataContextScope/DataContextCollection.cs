@@ -29,7 +29,7 @@ namespace Wintouch.Data.Linq
     /// </summary>
     public class DataContextCollection : IDataContextCollection
     {
-        private readonly Dictionary<Type, DataContext> _initializedDataContexts;
+        private readonly Dictionary<String, DataContext> _initializedDataContexts;
         private readonly Dictionary<DataContext, DbTransaction> _transactions; 
         private IsolationLevel? _isolationLevel;
         private readonly IDataContextFactory _dataContextFactory;
@@ -37,14 +37,14 @@ namespace Wintouch.Data.Linq
         private bool _completed;
         private readonly bool _readOnly;
 
-        internal Dictionary<Type, DataContext> InitializedDataContexts { get { return _initializedDataContexts; } }
+        internal Dictionary<String, DataContext> InitializedDataContexts { get { return _initializedDataContexts; } }
 
         public DataContextCollection(bool readOnly = false, IsolationLevel? isolationLevel = null, IDataContextFactory dataContextFactory = null)
         {
             _disposed = false;
             _completed = false;
 
-            _initializedDataContexts = new Dictionary<Type, DataContext>();
+            _initializedDataContexts = new Dictionary<String, DataContext>();
             _transactions = new Dictionary<DataContext, DbTransaction>();
 
             _readOnly = readOnly;
@@ -57,7 +57,7 @@ namespace Wintouch.Data.Linq
             if (_disposed)
                 throw new ObjectDisposedException("DataContextCollection");
 
-            var requestedType = typeof(TDataContext);
+            var requestedType = typeof(TDataContext).ToString();
 
             if (!_initializedDataContexts.ContainsKey(requestedType))
             {
@@ -82,7 +82,41 @@ namespace Wintouch.Data.Linq
                 }
             }
 
-            return _initializedDataContexts[requestedType]  as TDataContext;
+            return _initializedDataContexts[requestedType] as TDataContext;
+        }
+
+        public TDataContext Get<TDataContext>(string connectionString) where TDataContext : DataContext
+        {
+            if (_disposed)
+                throw new ObjectDisposedException("DataContextCollection");
+
+            var requestedType = typeof(TDataContext);
+            var requestedContextKey = String.Format("{0}_{1}", requestedType, connectionString);
+
+            if (!_initializedDataContexts.ContainsKey(requestedContextKey))
+            {
+                // First time we've been asked for this particular DataContext type.
+                // Create one, cache it and start its database transaction if needed.
+                var dataContext = _dataContextFactory != null
+                    ? _dataContextFactory.CreateDataContext<TDataContext>()
+                    : (TDataContext) Activator.CreateInstance(requestedType, connectionString);
+
+                _initializedDataContexts.Add(requestedContextKey, dataContext);
+
+                if (_readOnly)
+                {
+                    //TOOD: IS THIS CORRECT?
+                    dataContext.ObjectTrackingEnabled = false;
+                }
+
+                if (_isolationLevel.HasValue)
+                {
+                    var tran = dataContext.BeginTransaction(_isolationLevel.Value);
+                    _transactions.Add(dataContext, tran);
+                }
+            }
+
+            return _initializedDataContexts[requestedContextKey] as TDataContext;
         }
 
         public int Commit()
