@@ -34,19 +34,17 @@ namespace Wintouch.Data.Linq
       }
     }
 
-    public IDataContextScope Create(DataContextScopeOption joiningOption = DataContextScopeOption.JoinExisting)
+    public IDataContextScope Create()
     {
       return new DataContextScope(
-          joiningOption: joiningOption,
           readOnly: false,
           isolationLevel: null,
           dataContextFactory: _dataContextFactory);
     }
 
-    public IDataContextReadOnlyScope CreateReadOnly(DataContextScopeOption joiningOption = DataContextScopeOption.JoinExisting)
+    public IDataContextReadOnlyScope CreateReadOnly()
     {
       return new DataContextReadOnlyScope(
-          joiningOption: joiningOption,
           isolationLevel: null,
           dataContextFactory: _dataContextFactory);
     }
@@ -54,7 +52,6 @@ namespace Wintouch.Data.Linq
     public IDataContextScope CreateWithTransaction(IsolationLevel isolationLevel)
     {
       return new DataContextScope(
-          joiningOption: DataContextScopeOption.ForceCreateNew,
           readOnly: false,
           isolationLevel: isolationLevel,
           dataContextFactory: _dataContextFactory);
@@ -63,14 +60,9 @@ namespace Wintouch.Data.Linq
     public IDataContextReadOnlyScope CreateReadOnlyWithTransaction(IsolationLevel isolationLevel)
     {
       return new DataContextReadOnlyScope(
-          joiningOption: DataContextScopeOption.ForceCreateNew,
           isolationLevel: isolationLevel,
           dataContextFactory: _dataContextFactory);
     }
 
-    public IDisposable SuppressAmbientContext()
-    {
-      return new AmbientContextSuppressor();
-    }
   }
 }

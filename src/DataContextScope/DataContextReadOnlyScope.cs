@@ -17,16 +17,12 @@ namespace Wintouch.Data.Linq
         public IDataContextCollection DataContexts { get { return _internalScope.DataContexts; } }
 
         public DataContextReadOnlyScope(IDataContextFactory dataContextFactory = null)
-            : this(joiningOption: DataContextScopeOption.JoinExisting, isolationLevel: null, dataContextFactory: dataContextFactory)
+            : this(isolationLevel: null, dataContextFactory: dataContextFactory)
         {}
 
-        public DataContextReadOnlyScope(IsolationLevel isolationLevel, IDataContextFactory dataContextFactory = null)
-            : this(joiningOption: DataContextScopeOption.ForceCreateNew, isolationLevel: isolationLevel, dataContextFactory: dataContextFactory)
-        { }
-
-        public DataContextReadOnlyScope(DataContextScopeOption joiningOption, IsolationLevel? isolationLevel, IDataContextFactory dataContextFactory = null)
+        public DataContextReadOnlyScope(IsolationLevel? isolationLevel, IDataContextFactory dataContextFactory = null)
         {
-            _internalScope = new DataContextScope(joiningOption: joiningOption, readOnly: true, isolationLevel: isolationLevel, dataContextFactory: dataContextFactory);
+            _internalScope = new DataContextScope( readOnly: true, isolationLevel: isolationLevel, dataContextFactory: dataContextFactory);
         }
 
         public void Dispose()

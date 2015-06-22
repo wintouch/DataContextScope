@@ -38,16 +38,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AmbientContextSuppressor.cs" />
-    <Compile Include="AmbientDataContextLocator.cs" />
     <Compile Include="DataContextCollection.cs" />
     <Compile Include="DataContextFactory.cs" />
     <Compile Include="DataContextReadOnlyScope.cs" />
     <Compile Include="DataContextScope.cs" />
     <Compile Include="DataContextScopeFactory.cs" />
-    <Compile Include="DataContextScopeOption.cs" />
     <Compile Include="Extensions.cs" />
-    <Compile Include="IAmbientDataContextLocator.cs" />
     <Compile Include="IDataContextCollection.cs" />
     <Compile Include="IDataContextFactory.cs" />
     <Compile Include="IDataContextReadOnlyScope.cs" />

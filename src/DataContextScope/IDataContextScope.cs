@@ -74,7 +74,7 @@ namespace Wintouch.Data.Linq
     /// (this is a pretty advanced feature that should be used 
     /// with parsimony). 
     /// </summary>
-    void RefreshEntitiesInParentScope(IEnumerable entities);
+    //void RefreshEntitiesInParentScope(IEnumerable entities);
 
     /// <summary>
     /// Reloads the provided persistent entities from the data store
