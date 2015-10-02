@@ -20,5 +20,15 @@ namespace Wintouch.Data.Linq
     {
       return dataContextScope.DataContexts.Get<TDataContext>();
     }
+
+    public static TDataContext Get<TDataContext>(this IDataContextScope dataContextScope, string connectionString) where TDataContext : DataContext
+    {
+        return dataContextScope.DataContexts.Get<TDataContext>(connectionString);
+    }
+
+    public static TDataContext Get<TDataContext>(this IDataContextReadOnlyScope dataContextScope, string connectionString) where TDataContext : DataContext
+    {
+        return dataContextScope.DataContexts.Get<TDataContext>(connectionString);
+    }
   }
 }
