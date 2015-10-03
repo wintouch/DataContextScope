@@ -2,7 +2,7 @@
 
 DataContextScope
 ==============
-NOTE: THIS IS A FORK OF [DbContextScope](https://github.com/mehdime/DbContextScope) attempting to bring its goodness to Linq to SQL. Certain advanced features has not been ported yet.
+NOTE: THIS IS A FORK OF [DbContextScope](https://github.com/mehdime/DbContextScope) attempting to bring its goodness to Linq to SQL. Certain advanced features has not been ported yet, like nested scopes.
 
 A simple and flexible way to manage your Linq to SQL DataContext instances.
 
